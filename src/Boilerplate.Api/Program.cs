@@ -76,6 +76,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHeroEndpoints();
+app.MapVolunteerEndpoints();
+app.MapDebtEndpoints();
+app.MapEventEndpoints();
+app.MapTeamEndpoints();
 app.MapGroup("api/identity")
     .WithTags("Identity")
     .MapIdentityApi<ApplicationUser>();

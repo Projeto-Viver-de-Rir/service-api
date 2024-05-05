@@ -14,6 +14,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
 
     public DbSet<Hero> Heroes { get; set; } = null!;
     
+    public DbSet<Volunteer> Volunteers { get; set; } = null!;
+    public DbSet<Debt> Debts { get; set; } = null!;
+    public DbSet<Event> Events { get; set; } = null!;
+    public DbSet<Team> Teams { get; set; } = null!;
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
