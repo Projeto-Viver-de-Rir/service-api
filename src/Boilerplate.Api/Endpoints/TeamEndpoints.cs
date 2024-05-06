@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using System.Security.Claims;
 
 namespace Boilerplate.Api.Endpoints;
 
@@ -17,7 +18,8 @@ public static class TeamEndpoints
     public static void MapTeamEndpoints(this IEndpointRouteBuilder builder)
     {
         var group = builder.MapGroup("api/Team")
-            .WithTags("Team");
+            .WithTags("Team")
+            .RequireAuthorization();
         
         group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllTeamsRequest request) =>
         {
@@ -31,14 +33,18 @@ public static class TeamEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapPost("/", async (IMediator mediator, CreateTeamRequest request) =>
+        group.MapPost("/", async (IMediator mediator, CreateTeamRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
+            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
             var result = await mediator.Send(request);
             return result.ToMinimalApiResult();
         });
 
-        group.MapPut("{id}", async (IMediator mediator, TeamId id, UpdateTeamRequest request) =>
+        group.MapPut("{id}", async (IMediator mediator, TeamId id, UpdateTeamRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
+            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
             var result = await mediator.Send(request with { Id = id });
             return result.ToMinimalApiResult();
         });

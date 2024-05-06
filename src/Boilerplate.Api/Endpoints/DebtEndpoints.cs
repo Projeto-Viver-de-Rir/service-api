@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using System.Security.Claims;
 
 namespace Boilerplate.Api.Endpoints;
 
@@ -17,7 +18,8 @@ public static class DebtEndpoints
     public static void MapDebtEndpoints(this IEndpointRouteBuilder builder)
     {
         var group = builder.MapGroup("api/Debt")
-            .WithTags("Debt");
+            .WithTags("Debt")
+            .RequireAuthorization();
         
         group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllDebtsRequest request) =>
         {
@@ -31,20 +33,26 @@ public static class DebtEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapPost("/", async (IMediator mediator, CreateDebtRequest request) =>
+        group.MapPost("/", async (IMediator mediator, CreateDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
+            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
             var result = await mediator.Send(request);
             return result.ToMinimalApiResult();
         });
 
-        group.MapPut("{id}", async (IMediator mediator, DebtId id, UpdateDebtRequest request) =>
+        group.MapPut("{id}", async (IMediator mediator, DebtId id, UpdateDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
+            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
             var result = await mediator.Send(request with { Id = id });
             return result.ToMinimalApiResult();
         });
 
-        group.MapDelete("{id}", async (IMediator mediator, DebtId id) =>
+        group.MapDelete("{id}", async (IMediator mediator, DebtId id, IHttpContextAccessor httpContextAccessor) =>
         {
+            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
             var result = await mediator.Send(new DeleteDebtRequest(id));
             return result.ToMinimalApiResult();
         });

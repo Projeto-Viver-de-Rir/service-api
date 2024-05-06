@@ -17,7 +17,7 @@ public class CreateHeroHandler : IRequestHandler<CreateHeroRequest, Result<GetHe
         _context = context;
     }
 
-    public async Task<Result<GetHeroResponse>> Handle(CreateHeroRequest request, CancellationToken cancellationToken)
+    public async Task<Result<GetHeroResponse>> Handle(CreateHeroRequest request,  CancellationToken cancellationToken)
     {
         var created = request.Adapt<Domain.Entities.Hero>();
         _context.Heroes.Add(created);
