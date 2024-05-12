@@ -1,0 +1,19 @@
+﻿using Boilerplate.Domain.Entities.Common;
+using MassTransit;
+using System;
+
+namespace Boilerplate.Domain.Entities;
+
+public class EventPresence : Entity<EventPresenceId>
+{
+    public override EventPresenceId Id { get; set; } = NewId.NextGuid();
+    public EventId EventId { get; set; }
+    public VolunteerId VolunteerId { get; set; }
+    public DateTime RegistrationAt { get; set; }
+    public bool Attended { get; set; }
+    
+    public UserId CreatedBy { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public UserId? UpdatedBy { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+}

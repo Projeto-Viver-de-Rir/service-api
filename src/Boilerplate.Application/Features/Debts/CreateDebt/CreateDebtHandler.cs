@@ -19,8 +19,8 @@ public class CreateDebtHandler : IRequestHandler<CreateDebtRequest, Result<GetDe
 
     public async Task<Result<GetDebtResponse>> Handle(CreateDebtRequest request, CancellationToken cancellationToken)
     {
-        var created = request.Adapt<Domain.Entities.Hero>();
-        _context.Heroes.Add(created);
+        var created = request.Adapt<Domain.Entities.Debt>();
+        _context.Debts.Add(created);
         await _context.SaveChangesAsync(cancellationToken);
         return created.Adapt<GetDebtResponse>();
     }

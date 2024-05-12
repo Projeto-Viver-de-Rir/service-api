@@ -11,11 +11,13 @@ public interface IContext : IAsyncDisposable, IDisposable
 {
     public DatabaseFacade Database { get; }
     
-    public DbSet<Hero> Heroes { get; }
     public DbSet<Volunteer> Volunteers { get; }
     public DbSet<Debt> Debts { get; }
     public DbSet<Event> Events { get; }
+    public DbSet<EventPresence> EventPresences { get; }
+    public DbSet<ScheduleEvent> ScheduleEvents { get; }
     public DbSet<Team> Teams { get; }
+    public DbSet<Config> Configs { get; }
     
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

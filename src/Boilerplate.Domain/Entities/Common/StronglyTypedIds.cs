@@ -18,15 +18,6 @@ public partial struct UserId : IGuid
 }
 
 [StronglyTypedId]
-public partial struct HeroId : IGuid
-{
-    public static implicit operator HeroId(Guid guid)
-    {
-        return new HeroId(guid);
-    }
-}
-
-[StronglyTypedId]
 public partial struct VolunteerId : IGuid
 {
     public static implicit operator VolunteerId(Guid guid)
@@ -63,10 +54,28 @@ public partial struct TeamId : IGuid
 }
 
 [StronglyTypedId]
-public partial struct ConfigurationId : IGuid
+public partial struct ConfigId : IGuid
 {
-    public static implicit operator ConfigurationId(Guid guid)
+    public static implicit operator ConfigId(Guid guid)
     {
-        return new ConfigurationId(guid);
+        return new ConfigId(guid);
+    }
+}
+
+[StronglyTypedId]
+public partial struct ScheduleEventId : IGuid
+{
+    public static implicit operator ScheduleEventId(Guid guid)
+    {
+        return new ScheduleEventId(guid);
+    }
+}
+
+[StronglyTypedId]
+public partial struct EventPresenceId : IGuid
+{
+    public static implicit operator EventPresenceId(Guid guid)
+    {
+        return new EventPresenceId(guid);
     }
 }

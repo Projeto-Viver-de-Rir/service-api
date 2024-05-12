@@ -19,9 +19,9 @@ public class GetTeamByIdHandler : IRequestHandler<GetTeamByIdRequest, Result<Get
     }
     public async Task<Result<GetTeamResponse>> Handle(GetTeamByIdRequest request, CancellationToken cancellationToken)
     {
-        var volunteer = await _context.Teams.FirstOrDefaultAsync(x => x.Id == request.Id,
+        var team = await _context.Teams.FirstOrDefaultAsync(x => x.Id == request.Id,
             cancellationToken: cancellationToken);
-        if (volunteer is null) return Result.NotFound();
-        return volunteer.Adapt<GetTeamResponse>();
+        if (team is null) return Result.NotFound();
+        return team.Adapt<GetTeamResponse>();
     }
 }

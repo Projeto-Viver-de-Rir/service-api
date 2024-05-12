@@ -20,10 +20,10 @@ public class GetAllVolunteersHandler : IRequestHandler<GetAllVolunteersRequest, 
     }
     public async Task<PaginatedList<GetVolunteerResponse>> Handle(GetAllVolunteersRequest request, CancellationToken cancellationToken)
     {
-        var heroes = _context.Heroes
+        var volunteers = _context.Volunteers
             .WhereIf(!string.IsNullOrEmpty(request.Name), x => EF.Functions.Like(x.Name, $"%{request.Name}%"))
             .WhereIf(!string.IsNullOrEmpty(request.Nickname), x => EF.Functions.Like(x.Nickname!, $"%{request.Nickname}%"));
-        return await heroes.ProjectToType<GetVolunteerResponse>()
+        return await volunteers.ProjectToType<GetVolunteerResponse>()
             .OrderBy(x => x.Name)
             .ToPaginatedListAsync(request.CurrentPage, request.PageSize);
     }
