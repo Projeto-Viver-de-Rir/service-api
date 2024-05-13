@@ -82,6 +82,8 @@ app.MapEventPresenceEndpoints();
 app.MapScheduleEventEndpoints();
 app.MapTeamEndpoints();
 app.MapConfigEndpoints();
+app.MapOperationEndpoints();
+app.MapReportEndpoints();
 app.MapGroup("api/identity")
     .WithTags("Identity")
     .MapIdentityApi<ApplicationUser>();

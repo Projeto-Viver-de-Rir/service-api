@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result.AspNetCore;
+using Boilerplate.Application.Common.Requests;
 using Boilerplate.Application.Features.Volunteers.CreateVolunteer;
 using Boilerplate.Application.Features.Volunteers.DeleteVolunteer;
 using Boilerplate.Application.Features.Volunteers.GetAllVolunteers;
@@ -35,9 +36,10 @@ public static class VolunteerEndpoints
 
         group.MapPost("/", async (IMediator mediator, CreateVolunteerRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
-            var result = await mediator.Send(request);
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var result = await mediator.Send(request with { AuditFields = audit });
             return result.ToMinimalApiResult();
         });
 

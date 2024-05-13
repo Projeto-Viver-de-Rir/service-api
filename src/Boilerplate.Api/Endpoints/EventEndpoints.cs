@@ -1,4 +1,7 @@
 ﻿using Ardalis.Result.AspNetCore;
+using Boilerplate.Application.Common.Requests;
+using Boilerplate.Application.Features.Events.ConclusionEvent;
+using Boilerplate.Application.Features.Events.ConfirmPresenceEvent;
 using Boilerplate.Application.Features.Events.CreateEvent;
 using Boilerplate.Application.Features.Events.DeleteEvent;
 using Boilerplate.Application.Features.Events.GetAllEvents;
@@ -54,6 +57,24 @@ public static class EventEndpoints
             var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             
             var result = await mediator.Send(new DeleteEventRequest(id));
+            return result.ToMinimalApiResult();
+        });
+        
+        group.MapPut("{id}/Confirm", async (IMediator mediator, EventId id, ConfirmPresenceEventRequest request, IHttpContextAccessor httpContextAccessor) =>
+        {
+            var audit = 
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            
+            var result = await mediator.Send(request with { Id = id });
+            return result.ToMinimalApiResult();
+        });
+        
+        group.MapPut("{id}/Conclusion", async (IMediator mediator, EventId id, ConclusionEventRequest request, IHttpContextAccessor httpContextAccessor) =>
+        {
+            var audit = 
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            
+            var result = await mediator.Send(request with { Id = id, AuditFields = audit});
             return result.ToMinimalApiResult();
         });
     }
