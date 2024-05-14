@@ -26,8 +26,10 @@ public class UpdateConfigHandler : IRequestHandler<UpdateConfigRequest, Result<G
 
         originalConfig.Key = request.Key;
         originalConfig.Description = request.Description;
-        originalConfig.Value = request.Value;
-        
+        originalConfig.Value = request.Value;        
+        originalConfig.UpdatedBy = request.AuditFields!.StartedBy;
+        originalConfig.UpdatedAt = request.AuditFields!.StartedAt;
+
         _context.Configs.Update(originalConfig);
         await _context.SaveChangesAsync(cancellationToken);
         return originalConfig.Adapt<GetConfigResponse>();

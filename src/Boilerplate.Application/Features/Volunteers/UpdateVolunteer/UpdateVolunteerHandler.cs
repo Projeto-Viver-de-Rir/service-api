@@ -33,6 +33,8 @@ public class UpdateVolunteerHandler : IRequestHandler<UpdateVolunteerRequest, Re
         originalVolunteer.BirthDate = request.BirthDate;
         originalVolunteer.Availability = request.Availability;
         originalVolunteer.Comments = request.Comments;
+        originalVolunteer.UpdatedBy = request.AuditFields!.StartedBy;
+        originalVolunteer.UpdatedAt = request.AuditFields!.StartedAt;
         
         _context.Volunteers.Update(originalVolunteer);
         await _context.SaveChangesAsync(cancellationToken);

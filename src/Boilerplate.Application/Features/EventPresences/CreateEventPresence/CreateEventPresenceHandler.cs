@@ -20,6 +20,10 @@ public class CreateEventPresenceHandler : IRequestHandler<CreateEventPresenceReq
     public async Task<Result<GetEventPresenceResponse>> Handle(CreateEventPresenceRequest request, CancellationToken cancellationToken)
     {
         var created = request.Adapt<Domain.Entities.EventPresence>();
+        created.RegistrationAt = request.AuditFields!.StartedAt;
+        created.CreatedBy = request.AuditFields!.StartedBy;
+        created.CreatedAt = request.AuditFields!.StartedAt;
+
         _context.EventPresences.Add(created);
         await _context.SaveChangesAsync(cancellationToken);
         return created.Adapt<GetEventPresenceResponse>();

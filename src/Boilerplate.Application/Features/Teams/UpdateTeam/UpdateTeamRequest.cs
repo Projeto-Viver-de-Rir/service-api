@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using Boilerplate.Application.Common.Requests;
 using Boilerplate.Domain.Entities.Common;
 using Boilerplate.Domain.Entities.Enums;
 using MediatR;
@@ -15,4 +16,7 @@ public record UpdateTeamRequest : IRequest<Result<GetTeamResponse>>
     public string? Description { get; init; }
     public TeamType Type { get; init; }
     public TeamStatus Status { get; init; }
+
+    [JsonIgnore]
+    public AuditData? AuditFields { get; init; }
 }

@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result.AspNetCore;
+using Boilerplate.Application.Common.Requests;
 using Boilerplate.Application.Features.Configs.CreateConfig;
 using Boilerplate.Application.Features.Configs.DeleteConfig;
 using Boilerplate.Application.Features.Configs.GetAllConfig;
@@ -17,8 +18,8 @@ public static class ConfigEndpoints
 {
     public static void MapConfigEndpoints(this IEndpointRouteBuilder builder)
     {
-        var group = builder.MapGroup("api/Config")
-            .WithTags("Config")
+        var group = builder.MapGroup("api/config")
+            .WithTags("config")
             .RequireAuthorization();
         
         group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllConfigsRequest request) =>
@@ -35,17 +36,19 @@ public static class ConfigEndpoints
 
         group.MapPost("/", async (IMediator mediator, CreateConfigRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(request with { AuditFields = audit });
             return result.ToMinimalApiResult();
         });
 
         group.MapPut("{id}", async (IMediator mediator, ConfigId id, UpdateConfigRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request with { Id = id });
+            var result = await mediator.Send(request with { Id = id, AuditFields = audit });
             return result.ToMinimalApiResult();
         });
         

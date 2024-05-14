@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using Boilerplate.Application.Features.Configs;
+using Boilerplate.Application.Common.Requests;
 using Boilerplate.Domain.Entities.Common;
 using MediatR;
 using System.Text.Json.Serialization;
@@ -14,4 +15,7 @@ public record UpdateConfigRequest : IRequest<Result<GetConfigResponse>>
     public string Key { get; init; } = null!;
     public string? Description { get; init; }
     public string Value { get; init; } = null!;
+
+    [JsonIgnore]
+    public AuditData? AuditFields { get; init; }
 }

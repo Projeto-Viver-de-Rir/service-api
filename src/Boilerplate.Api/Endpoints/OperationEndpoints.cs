@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result.AspNetCore;
+using Boilerplate.Application.Common.Requests;
 using Boilerplate.Application.Features.ScheduleEvents.CreateScheduleEvent;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -12,23 +13,25 @@ public static class OperationEndpoints
 {
     public static void MapOperationEndpoints(this IEndpointRouteBuilder builder)
     {
-        var group = builder.MapGroup("api/Operation")
-            .WithTags("Operation")
+        var group = builder.MapGroup("api/operation")
+            .WithTags("operation")
             .RequireAuthorization();
         
-        group.MapPost("/Events", async (IMediator mediator, CreateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPost("/events", async (IMediator mediator, CreateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(request with { AuditFields = audit });
             return result.ToMinimalApiResult();
         });
         
-        group.MapPost("/Debts", async (IMediator mediator, CreateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPost("/debts", async (IMediator mediator, CreateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(request with { AuditFields = audit });
             return result.ToMinimalApiResult();
         });
     }

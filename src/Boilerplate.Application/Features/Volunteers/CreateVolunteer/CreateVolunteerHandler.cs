@@ -21,10 +21,8 @@ public class CreateVolunteerHandler : IRequestHandler<CreateVolunteerRequest, Re
     {
         var created = request.Adapt<Domain.Entities.Volunteer>();
         if (request.AuditFields != null)
-        {
-            created.CreatedBy = request.AuditFields.StartedBy;
-            created.CreatedAt = request.AuditFields.StartedAt;
-        }
+        created.CreatedBy = request.AuditFields!.StartedBy;
+        created.CreatedAt = request.AuditFields!.StartedAt;
 
         _context.Volunteers.Add(created);
         await _context.SaveChangesAsync(cancellationToken);

@@ -20,6 +20,9 @@ public class CreateTeamHandler : IRequestHandler<CreateTeamRequest, Result<GetTe
     public async Task<Result<GetTeamResponse>> Handle(CreateTeamRequest request, CancellationToken cancellationToken)
     {
         var created = request.Adapt<Domain.Entities.Team>();
+        created.CreatedBy = request.AuditFields!.StartedBy;
+        created.CreatedAt = request.AuditFields!.StartedAt;
+
         _context.Teams.Add(created);
         await _context.SaveChangesAsync(cancellationToken);
         return created.Adapt<GetTeamResponse>();

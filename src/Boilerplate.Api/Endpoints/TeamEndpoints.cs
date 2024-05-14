@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result.AspNetCore;
+using Boilerplate.Application.Common.Requests;
 using Boilerplate.Application.Features.Teams.CreateTeam;
 using Boilerplate.Application.Features.Teams.DeleteTeam;
 using Boilerplate.Application.Features.Teams.GetAllTeams;
@@ -17,8 +18,8 @@ public static class TeamEndpoints
 {
     public static void MapTeamEndpoints(this IEndpointRouteBuilder builder)
     {
-        var group = builder.MapGroup("api/Team")
-            .WithTags("Team")
+        var group = builder.MapGroup("api/team")
+            .WithTags("team")
             .RequireAuthorization();
         
         group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllTeamsRequest request) =>
@@ -35,17 +36,19 @@ public static class TeamEndpoints
 
         group.MapPost("/", async (IMediator mediator, CreateTeamRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(request with { AuditFields = audit });
             return result.ToMinimalApiResult();
         });
 
         group.MapPut("{id}", async (IMediator mediator, TeamId id, UpdateTeamRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request with { Id = id });
+            var result = await mediator.Send(request with { Id = id, AuditFields = audit });
             return result.ToMinimalApiResult();
         });
 

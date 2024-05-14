@@ -20,6 +20,9 @@ public class CreateEventHandler : IRequestHandler<CreateEventRequest, Result<Get
     public async Task<Result<GetEventResponse>> Handle(CreateEventRequest request, CancellationToken cancellationToken)
     {
         var created = request.Adapt<Domain.Entities.Event>();
+        created.CreatedBy = request.AuditFields!.StartedBy;
+        created.CreatedAt = request.AuditFields!.StartedAt;
+
         _context.Events.Add(created);
         await _context.SaveChangesAsync(cancellationToken);
         return created.Adapt<GetEventResponse>();

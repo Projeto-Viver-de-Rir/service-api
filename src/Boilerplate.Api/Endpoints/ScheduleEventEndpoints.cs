@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result.AspNetCore;
+using Boilerplate.Application.Common.Requests;
 using Boilerplate.Application.Features.ScheduleEvents.CreateScheduleEvent;
 using Boilerplate.Application.Features.ScheduleEvents.DeleteScheduleEvent;
 using Boilerplate.Application.Features.ScheduleEvents.GetAllScheduleEvents;
@@ -17,8 +18,8 @@ public static class ScheduleScheduleEventEndpoints
 {
     public static void MapScheduleEventEndpoints(this IEndpointRouteBuilder builder)
     {
-        var group = builder.MapGroup("api/ScheduleEvent")
-            .WithTags("ScheduleEvent")
+        var group = builder.MapGroup("api/schedule-event")
+            .WithTags("schedule-event")
             .RequireAuthorization();
         
         group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllScheduleEventsRequest request) =>
@@ -35,17 +36,19 @@ public static class ScheduleScheduleEventEndpoints
 
         group.MapPost("/", async (IMediator mediator, CreateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(request with { AuditFields = audit });
             return result.ToMinimalApiResult();
         });
 
         group.MapPut("{id}", async (IMediator mediator, ScheduleEventId id, UpdateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request with { Id = id });
+            var result = await mediator.Send(request with { Id = id, AuditFields = audit });
             return result.ToMinimalApiResult();
         });
         

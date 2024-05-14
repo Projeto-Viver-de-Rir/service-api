@@ -22,12 +22,16 @@ public class UpdateEventPresenceHandler : IRequestHandler<UpdateEventPresenceReq
     {
         var originalEventPresence = await _context.EventPresences
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-        if (originalEventPresence == null) return Result.NotFound();
+        
+        if (originalEventPresence == null) 
+            return Result.NotFound();
 
         originalEventPresence.EventId = request.EventId;
         originalEventPresence.VolunteerId = request.VolunteerId;
         originalEventPresence.Attended = request.Attended;
-        
+        originalEventPresence.UpdatedBy = request.AuditFields!.StartedBy;
+        originalEventPresence.UpdatedAt = request.AuditFields!.StartedAt;
+
         _context.EventPresences.Update(originalEventPresence);
         await _context.SaveChangesAsync(cancellationToken);
         return originalEventPresence.Adapt<GetEventPresenceResponse>();

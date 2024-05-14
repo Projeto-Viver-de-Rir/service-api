@@ -32,7 +32,9 @@ public class UpdateEventHandler : IRequestHandler<UpdateEventRequest, Result<Get
         originalEvent.HappenAt = request.HappenAt;
         originalEvent.Occupancy = request.Occupancy;
         originalEvent.Status = request.Status;
-        
+        originalEvent.UpdatedBy = request.AuditFields!.StartedBy;
+        originalEvent.UpdatedAt = request.AuditFields!.StartedAt;        
+
         _context.Events.Update(originalEvent);
         await _context.SaveChangesAsync(cancellationToken);
         return originalEvent.Adapt<GetEventResponse>();

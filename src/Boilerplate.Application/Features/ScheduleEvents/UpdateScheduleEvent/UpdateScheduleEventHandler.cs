@@ -31,7 +31,9 @@ public class UpdateScheduleEventHandler : IRequestHandler<UpdateScheduleEventReq
         originalScheduleEvent.MeetingPoint = request.MeetingPoint;
         originalScheduleEvent.Occupancy = request.Occupancy;
         originalScheduleEvent.DayOfWeek = request.DayOfWeek;
-        originalScheduleEvent.Occurence = request.Occurence;
+        originalScheduleEvent.Occurence = request.Occurrence;
+        originalScheduleEvent.UpdatedBy = request.AuditFields!.StartedBy;
+        originalScheduleEvent.UpdatedAt = request.AuditFields!.StartedAt;
         
         _context.ScheduleEvents.Update(originalScheduleEvent);
         await _context.SaveChangesAsync(cancellationToken);

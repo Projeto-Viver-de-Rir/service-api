@@ -28,6 +28,8 @@ public class UpdateTeamHandler : IRequestHandler<UpdateTeamRequest, Result<GetTe
         originalTeam.Description = request.Description;
         originalTeam.Type = request.Type;
         originalTeam.Status = request.Status;
+        originalTeam.UpdatedBy = request.AuditFields!.StartedBy;
+        originalTeam.UpdatedAt = request.AuditFields!.StartedAt;
         
         _context.Teams.Update(originalTeam);
         await _context.SaveChangesAsync(cancellationToken);

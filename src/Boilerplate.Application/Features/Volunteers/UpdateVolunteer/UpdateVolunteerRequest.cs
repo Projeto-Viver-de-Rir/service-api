@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using Boilerplate.Application.Common.Requests;
 using Boilerplate.Domain.Entities.Common;
 using Boilerplate.Domain.Entities.Enums;
 using MediatR;
@@ -21,4 +22,7 @@ public record UpdateVolunteerRequest : IRequest<Result<GetVolunteerResponse>>
     public DateTime? BirthDate { get; init; }
     public string? Availability { get; init; }
     public string? Comments { get; init; }
+
+    [JsonIgnore]
+    public AuditData? AuditFields { get; init; }
 }

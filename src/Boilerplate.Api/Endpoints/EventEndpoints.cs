@@ -1,7 +1,6 @@
 ﻿using Ardalis.Result.AspNetCore;
 using Boilerplate.Application.Common.Requests;
 using Boilerplate.Application.Features.Events.ConclusionEvent;
-using Boilerplate.Application.Features.Events.ConfirmPresenceEvent;
 using Boilerplate.Application.Features.Events.CreateEvent;
 using Boilerplate.Application.Features.Events.DeleteEvent;
 using Boilerplate.Application.Features.Events.GetAllEvents;
@@ -20,8 +19,8 @@ public static class EventEndpoints
 {
     public static void MapEventEndpoints(this IEndpointRouteBuilder builder)
     {
-        var group = builder.MapGroup("api/Event")
-            .WithTags("Event")
+        var group = builder.MapGroup("api/event")
+            .WithTags("event")
             .RequireAuthorization();
         
         group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllEventsRequest request) =>
@@ -38,17 +37,19 @@ public static class EventEndpoints
 
         group.MapPost("/", async (IMediator mediator, CreateEventRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(request with { AuditFields = audit});
             return result.ToMinimalApiResult();
         });
 
         group.MapPut("{id}", async (IMediator mediator, EventId id, UpdateEventRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request with { Id = id });
+            var result = await mediator.Send(request with { Id = id, AuditFields = audit });
             return result.ToMinimalApiResult();
         });
 
@@ -60,16 +61,7 @@ public static class EventEndpoints
             return result.ToMinimalApiResult();
         });
         
-        group.MapPut("{id}/Confirm", async (IMediator mediator, EventId id, ConfirmPresenceEventRequest request, IHttpContextAccessor httpContextAccessor) =>
-        {
-            var audit = 
-                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            
-            var result = await mediator.Send(request with { Id = id });
-            return result.ToMinimalApiResult();
-        });
-        
-        group.MapPut("{id}/Conclusion", async (IMediator mediator, EventId id, ConclusionEventRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPut("{id}/conclusion", async (IMediator mediator, EventId id, ConclusionEventRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit = 
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);

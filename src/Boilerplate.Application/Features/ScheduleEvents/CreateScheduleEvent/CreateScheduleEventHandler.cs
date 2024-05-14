@@ -20,6 +20,9 @@ public class CreateScheduleEventHandler : IRequestHandler<CreateScheduleEventReq
     public async Task<Result<GetScheduleEventResponse>> Handle(CreateScheduleEventRequest request, CancellationToken cancellationToken)
     {
         var created = request.Adapt<Domain.Entities.ScheduleEvent>();
+        created.CreatedBy = request.AuditFields!.StartedBy;
+        created.CreatedAt = request.AuditFields!.StartedAt;
+
         _context.ScheduleEvents.Add(created);
         await _context.SaveChangesAsync(cancellationToken);
         return created.Adapt<GetScheduleEventResponse>();

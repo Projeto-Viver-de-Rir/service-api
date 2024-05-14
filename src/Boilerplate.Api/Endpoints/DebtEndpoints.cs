@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result.AspNetCore;
+using Boilerplate.Application.Common.Requests;
 using Boilerplate.Application.Features.Debts.CreateDebt;
 using Boilerplate.Application.Features.Debts.DeleteDebt;
 using Boilerplate.Application.Features.Debts.GetAllDebts;
@@ -17,8 +18,8 @@ public static class DebtEndpoints
 {
     public static void MapDebtEndpoints(this IEndpointRouteBuilder builder)
     {
-        var group = builder.MapGroup("api/Debt")
-            .WithTags("Debt")
+        var group = builder.MapGroup("api/debt")
+            .WithTags("debt")
             .RequireAuthorization();
         
         group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllDebtsRequest request) =>
@@ -35,17 +36,19 @@ public static class DebtEndpoints
 
         group.MapPost("/", async (IMediator mediator, CreateDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request);
+            var result = await mediator.Send(request with { AuditFields = audit });
             return result.ToMinimalApiResult();
         });
 
         group.MapPut("{id}", async (IMediator mediator, DebtId id, UpdateDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request with { Id = id });
+            var result = await mediator.Send(request with { Id = id, AuditFields = audit });
             return result.ToMinimalApiResult();
         });
 

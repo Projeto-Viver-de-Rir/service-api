@@ -18,8 +18,8 @@ public static class VolunteerEndpoints
 {
     public static void MapVolunteerEndpoints(this IEndpointRouteBuilder builder)
     {
-        var group = builder.MapGroup("api/Volunteer")
-            .WithTags("Volunteer")
+        var group = builder.MapGroup("api/volunteer")
+            .WithTags("volunteer")
             .RequireAuthorization();
         
         group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllVolunteersRequest request) =>
@@ -45,9 +45,10 @@ public static class VolunteerEndpoints
 
         group.MapPut("{id}", async (IMediator mediator, VolunteerId id, UpdateVolunteerRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var result = await mediator.Send(request with { Id = id });
+            var result = await mediator.Send(request with { Id = id, AuditFields = audit });
             return result.ToMinimalApiResult();
         });
 

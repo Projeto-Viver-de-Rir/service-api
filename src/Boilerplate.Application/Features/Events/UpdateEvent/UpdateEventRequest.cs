@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using Boilerplate.Application.Common.Requests;
 using Boilerplate.Domain.Entities.Common;
 using Boilerplate.Domain.Entities.Enums;
 using MediatR;
@@ -20,4 +21,7 @@ public record UpdateEventRequest : IRequest<Result<GetEventResponse>>
     public DateTime? HappenAt { get; init; }
     public int Occupancy { get; init; }
     public EventStatus Status { get; init; } 
+
+    [JsonIgnore]
+    public AuditData? AuditFields { get; init; }
 }

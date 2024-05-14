@@ -10,17 +10,17 @@ public static class ReportEndpoints
 {
     public static void MapReportEndpoints(this IEndpointRouteBuilder builder)
     {
-        var group = builder.MapGroup("api/Report")
-            .WithTags("Report")
+        var group = builder.MapGroup("api/report")
+            .WithTags("report")
             .RequireAuthorization();
         
-        group.MapGet("/Debts", async (IMediator mediator, [AsParameters] GetAllConfigsRequest request) =>
+        group.MapGet("/debts", async (IMediator mediator, [AsParameters] GetAllConfigsRequest request) =>
         {
             var result = await mediator.Send(request);
             return result;
         });
         
-        group.MapGet("/Presences", async (IMediator mediator, [AsParameters] GetAllConfigsRequest request) =>
+        group.MapGet("/presences", async (IMediator mediator, [AsParameters] GetAllConfigsRequest request) =>
         {
             var result = await mediator.Send(request);
             return result;
