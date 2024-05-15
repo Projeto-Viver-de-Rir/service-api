@@ -75,6 +75,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapAccountEndpoints();
 app.MapVolunteerEndpoints();
 app.MapDebtEndpoints();
 app.MapEventEndpoints();
