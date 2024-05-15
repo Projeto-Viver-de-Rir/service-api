@@ -1,6 +1,7 @@
 ﻿using Ardalis.Result.AspNetCore;
 using Boilerplate.Application.Common.Requests;
-using Boilerplate.Application.Features.ScheduleEvents.CreateScheduleEvent;
+using Boilerplate.Application.Features.Operations.CreateDebts;
+using Boilerplate.Application.Features.Operations.CreateEvents;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +18,7 @@ public static class OperationEndpoints
             .WithTags("operation")
             .RequireAuthorization();
         
-        group.MapPost("/events", async (IMediator mediator, CreateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPost("/events", async (IMediator mediator, CreateEventsRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -26,7 +27,7 @@ public static class OperationEndpoints
             return result.ToMinimalApiResult();
         });
         
-        group.MapPost("/debts", async (IMediator mediator, CreateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPost("/debts", async (IMediator mediator, CreateDebtsRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);

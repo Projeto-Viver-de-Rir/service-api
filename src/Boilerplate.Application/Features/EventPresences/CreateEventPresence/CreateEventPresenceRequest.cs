@@ -12,7 +12,6 @@ public record CreateEventPresenceRequest : IRequest<Result<GetEventPresenceRespo
 {
     public EventId EventId { get; set; }
     public VolunteerId VolunteerId { get; set; }
-    public bool Attended { get; set; }
 
     [JsonIgnore]
     public AuditData? AuditFields { get; init; }
