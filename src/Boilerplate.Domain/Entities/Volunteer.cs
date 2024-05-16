@@ -13,9 +13,12 @@ public class Volunteer : Entity<VolunteerId>
     public string? City { get; set; }
     public string? State { get; set; }
     public string? Zip { get; set; }
+    public string? Country { get; set; }
     public DateTime? BirthDate { get; set; }
     public string? Availability { get; set; }
     public string? Comments { get; set; }
+    public string? Identifier { get; set; }
+    public UserId AccountId { get; set; }
     
     public UserId CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }

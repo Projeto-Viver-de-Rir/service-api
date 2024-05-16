@@ -14,6 +14,9 @@ public class VolunteerConfiguration : IEntityTypeConfiguration<Volunteer>
         builder.Property(x => x.Id)
             .HasConversion<VolunteerId.EfCoreValueConverter>();
         
+        builder.Property(x => x.AccountId)
+            .HasConversion<UserId.EfCoreValueConverter>();
+        
         builder.Property(x => x.CreatedBy)
             .HasConversion<UserId.EfCoreValueConverter>();
         

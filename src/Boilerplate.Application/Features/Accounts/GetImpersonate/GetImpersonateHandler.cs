@@ -6,20 +6,20 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Boilerplate.Application.Features.Accounts.GetMyself;
+namespace Boilerplate.Application.Features.Accounts.GetImpersonate;
 
-public class GetMyselfHandler : IRequestHandler<GetMyselfRequest, Result<GetMyselfResponse>>
+public class GetImpersonateHandler : IRequestHandler<GetImpersonateRequest, Result<GetMyselfResponse>>
 {
     private readonly IContext _context;
 
 
-    public GetMyselfHandler(IContext context)
+    public GetImpersonateHandler(IContext context)
     {
         _context = context;
     }
-    public async Task<Result<GetMyselfResponse>> Handle(GetMyselfRequest request, CancellationToken cancellationToken)
+    public async Task<Result<GetMyselfResponse>> Handle(GetImpersonateRequest request, CancellationToken cancellationToken)
     {
-        var volunteer = await _context.Volunteers.FirstOrDefaultAsync(x => x.AccountId == request.Id,
+        var volunteer = await _context.Volunteers.FirstOrDefaultAsync(x => x.Id == request.Id,
             cancellationToken: cancellationToken);
 
         if (volunteer is null) 

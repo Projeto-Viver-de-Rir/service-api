@@ -14,9 +14,6 @@ public class ConfigConfiguration : IEntityTypeConfiguration<Config>
         builder.Property(x => x.Id)
             .HasConversion<ConfigId.EfCoreValueConverter>();
         
-        builder.Property(x => x.CreatedBy)
-            .HasConversion<UserId.EfCoreValueConverter>();
-        
         builder.Property(x => x.UpdatedBy)
             .HasConversion<UserId.EfCoreValueConverter>();        
     }

@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result.AspNetCore;
+using Boilerplate.Application.Features.Accounts.GetImpersonate;
 using Boilerplate.Application.Features.Accounts.GetMyself;
 using Boilerplate.Domain.Entities.Common;
 using MediatR;
@@ -23,6 +24,12 @@ public static class AccountEndpoints
             var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var result = await mediator.Send(new GetMyselfRequest(Guid.Parse(loggedUserId)));
+            return result.ToMinimalApiResult();
+        });
+        
+        group.MapGet("/impersonate/{id}", async (IMediator mediator, VolunteerId id, IHttpContextAccessor httpContextAccessor) =>
+        {
+            var result = await mediator.Send(new GetImpersonateRequest(id));
             return result.ToMinimalApiResult();
         });
     }

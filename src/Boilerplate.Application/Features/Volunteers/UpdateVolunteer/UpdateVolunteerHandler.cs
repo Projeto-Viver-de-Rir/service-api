@@ -30,9 +30,12 @@ public class UpdateVolunteerHandler : IRequestHandler<UpdateVolunteerRequest, Re
         originalVolunteer.City = request.City;
         originalVolunteer.State = request.State;
         originalVolunteer.Zip = request.Zip;
+        originalVolunteer.Country = request.Country;
         originalVolunteer.BirthDate = request.BirthDate;
         originalVolunteer.Availability = request.Availability;
         originalVolunteer.Comments = request.Comments;
+        originalVolunteer.Identifier = request.Identifier;
+        originalVolunteer.AccountId = request.AccountId;
         originalVolunteer.UpdatedBy = request.AuditFields!.StartedBy;
         originalVolunteer.UpdatedAt = request.AuditFields!.StartedAt;
         

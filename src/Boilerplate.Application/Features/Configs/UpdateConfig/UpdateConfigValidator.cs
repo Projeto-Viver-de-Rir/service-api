@@ -11,9 +11,8 @@ public class UpdateConfigValidator : AbstractValidator<UpdateConfigRequest>
         RuleFor(x => x.Id)
             .NotEmpty();
         
-        RuleFor(x => x.Key)
-            .NotEmpty()
-            .MaximumLength(StringSizes.Max);
+        RuleFor(x => x.Type)
+            .IsInEnum();
 
         RuleFor(x => x.Value)
             .NotEmpty()

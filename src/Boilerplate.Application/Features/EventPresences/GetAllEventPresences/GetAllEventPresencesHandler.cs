@@ -20,9 +20,8 @@ public class GetAllEventPresencesHandler : IRequestHandler<GetAllEventPresencesR
     }
     public async Task<PaginatedList<GetEventPresenceResponse>> Handle(GetAllEventPresencesRequest request, CancellationToken cancellationToken)
     {
-        var events = _context.Events
-            .WhereIf(!string.IsNullOrEmpty(request.Name), x => EF.Functions.Like(x.Name, $"%{request.Name}%"));
-        return await events.ProjectToType<GetEventPresenceResponse>()
+        var eventPresences = _context.EventPresences;
+        return await eventPresences.ProjectToType<GetEventPresenceResponse>()
             .OrderBy(x => x.VolunteerId)
             .ToPaginatedListAsync(request.CurrentPage, request.PageSize);
     }

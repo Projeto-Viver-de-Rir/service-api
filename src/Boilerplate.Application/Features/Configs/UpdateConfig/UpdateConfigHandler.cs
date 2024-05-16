@@ -24,7 +24,7 @@ public class UpdateConfigHandler : IRequestHandler<UpdateConfigRequest, Result<G
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         if (originalConfig == null) return Result.NotFound();
 
-        originalConfig.Key = request.Key;
+        originalConfig.Type = request.Type;
         originalConfig.Description = request.Description;
         originalConfig.Value = request.Value;        
         originalConfig.UpdatedBy = request.AuditFields!.StartedBy;

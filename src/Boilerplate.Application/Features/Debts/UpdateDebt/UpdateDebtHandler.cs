@@ -32,6 +32,7 @@ public class UpdateDebtHandler : IRequestHandler<UpdateDebtRequest, Result<GetDe
         originalDebt.Amount = request.Amount;
         originalDebt.DueDate = request.DueDate;
         originalDebt.VolunteerId = request.VolunteerId;
+        originalDebt.PaidAt = request.PaidAt;
         originalDebt.UpdatedBy = request.AuditFields!.StartedBy;
         originalDebt.UpdatedAt = request.AuditFields!.StartedAt;            
 

@@ -20,8 +20,6 @@ public class CreateDebtsHandler : IRequestHandler<CreateDebtsRequest, Result<Get
     public async Task<Result<GetOperationsResponse>> Handle(CreateDebtsRequest request, CancellationToken cancellationToken)
     {
         var created = request.Adapt<Domain.Entities.Config>();
-        created.CreatedBy = request.AuditFields!.StartedBy;
-        created.CreatedAt = request.AuditFields!.StartedAt;            
 
         _context.Configs.Add(created);
         await _context.SaveChangesAsync(cancellationToken);

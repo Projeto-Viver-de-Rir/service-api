@@ -19,10 +19,13 @@ public record UpdateVolunteerRequest : IRequest<Result<GetVolunteerResponse>>
     public string? City { get; init; }
     public string? State { get; init; }
     public string? Zip { get; init; }
+    public string? Country { get; init; }
     public DateTime? BirthDate { get; init; }
     public string? Availability { get; init; }
     public string? Comments { get; init; }
-
+    public string? Identifier { get; init; }
+    public UserId AccountId { get; init; }
+    
     [JsonIgnore]
     public AuditData? AuditFields { get; init; }
 }

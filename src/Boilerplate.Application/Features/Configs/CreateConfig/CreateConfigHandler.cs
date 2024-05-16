@@ -20,8 +20,6 @@ public class CreateConfigHandler : IRequestHandler<CreateConfigRequest, Result<G
     public async Task<Result<GetConfigResponse>> Handle(CreateConfigRequest request, CancellationToken cancellationToken)
     {
         var created = request.Adapt<Domain.Entities.Config>();
-        created.CreatedBy = request.AuditFields!.StartedBy;
-        created.CreatedAt = request.AuditFields!.StartedAt;            
 
         _context.Configs.Add(created);
         await _context.SaveChangesAsync(cancellationToken);

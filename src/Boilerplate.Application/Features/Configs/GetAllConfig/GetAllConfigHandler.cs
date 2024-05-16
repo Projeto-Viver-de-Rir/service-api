@@ -21,9 +21,9 @@ public class GetAllConfigHandler : IRequestHandler<GetAllConfigsRequest, Paginat
     public async Task<PaginatedList<GetConfigResponse>> Handle(GetAllConfigsRequest request, CancellationToken cancellationToken)
     {
         var configs = _context.Configs
-            .WhereIf(!string.IsNullOrEmpty(request.Key), x => EF.Functions.Like(x.Key, $"%{request.Key}%"));
+            .WhereIf(request.Type.HasValue, x => x.Type == request.Type);
         return await configs.ProjectToType<GetConfigResponse>()
-            .OrderBy(x => x.Key)
+            .OrderBy(x => x.Type)
             .ToPaginatedListAsync(request.CurrentPage, request.PageSize);
     }
 }

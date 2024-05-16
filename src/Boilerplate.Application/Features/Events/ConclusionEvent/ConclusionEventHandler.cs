@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using Boilerplate.Application.Common;
+using Boilerplate.Domain.Entities.Enums;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,8 @@ public class ConclusionEventHandler : IRequestHandler<ConclusionEventRequest, Re
                 originalPresence.UpdatedBy = request.AuditFields!.StartedBy;
             }
         }
+
+        originalEvent.Status = EventStatus.Realized;
         
         await _context.SaveChangesAsync(cancellationToken);
         return originalEvent.Adapt<GetEventResponse>();
