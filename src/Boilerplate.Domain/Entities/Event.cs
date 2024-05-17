@@ -2,6 +2,7 @@
 using Boilerplate.Domain.Entities.Enums;
 using MassTransit;
 using System;
+using System.Collections.Generic;
 
 namespace Boilerplate.Domain.Entities;
 
@@ -21,4 +22,6 @@ public class Event : Entity<EventId>
     public DateTime CreatedAt { get; set; }
     public UserId? UpdatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    
+    public virtual ICollection<EventPresence> Presences { get; set; }
 }

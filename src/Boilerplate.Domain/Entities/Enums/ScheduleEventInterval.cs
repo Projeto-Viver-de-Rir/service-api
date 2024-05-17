@@ -2,7 +2,7 @@
 
 public enum ScheduleEventInterval
 {
-    EveryOccurenceWeekDay = 0,
+    EveryWeekDay = 0,
     FirstOccurenceWeekDay = 1,
     SecondOccurenceWeekDay = 2,
     ThirdOccurenceWeekDay = 3,

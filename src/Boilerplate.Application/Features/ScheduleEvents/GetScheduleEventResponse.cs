@@ -14,5 +14,5 @@ public record GetScheduleEventResponse
     public string? MeetingPoint { get; set; }
     public int Occupancy { get; set; }
     public DayOfWeek DayOfWeek { get; set; }
-    public ScheduleEventInterval Occurence { get; set; }
+    public ScheduleEventInterval Occurrence { get; set; }
 }

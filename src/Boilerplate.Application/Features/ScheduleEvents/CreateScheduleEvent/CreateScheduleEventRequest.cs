@@ -17,6 +17,7 @@ public record CreateScheduleEventRequest : IRequest<Result<GetScheduleEventRespo
     public int Occupancy { get; set; }
     public DayOfWeek DayOfWeek { get; set; }
     public ScheduleEventInterval Occurrence { get; set; }
+    public TimeOnly Schedule { get; set; }
 
     [JsonIgnore]
     public AuditData? AuditFields { get; init; }

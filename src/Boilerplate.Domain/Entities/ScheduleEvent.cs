@@ -15,7 +15,8 @@ public class ScheduleEvent : Entity<ScheduleEventId>
     public string? MeetingPoint { get; set; }
     public int Occupancy { get; set; }
     public DayOfWeek DayOfWeek { get; set; }
-    public ScheduleEventInterval Occurence { get; set; }
+    public ScheduleEventInterval Occurrence { get; set; }
+    public TimeOnly Schedule { get; set; }
     
     public UserId CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }
