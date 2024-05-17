@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using Boilerplate.Application.Common;
+using Boilerplate.Domain.Entities.Common;
 using Boilerplate.Domain.Entities.Enums;
 using Mapster;
 using MediatR;
@@ -35,6 +36,9 @@ public class CreateVolunteerHandler : IRequestHandler<CreateVolunteerRequest, Re
             request.AuditFields!.StartedAt <= registrationPeriod.GetProperty("blockAfter").GetDateTimeOffset())
         {
             var created = request.Adapt<Domain.Entities.Volunteer>();
+            
+            if (created.AccountId == UserId.Empty)
+                created.AccountId = request.AuditFields!.StartedBy;
             created.CreatedBy = request.AuditFields!.StartedBy;
             created.CreatedAt = request.AuditFields!.StartedAt;
 
