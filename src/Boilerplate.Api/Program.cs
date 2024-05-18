@@ -53,6 +53,18 @@ if (builder.Environment.EnvironmentName != "Testing")
     builder.AddOpenTemeletrySetup();
 }
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder
+                .AllowAnyOrigin() 
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
 
 var app = builder.Build();
 
@@ -68,6 +80,7 @@ app.UseRouting();
 
 app.UseSwaggerSetup();
 app.UseHsts();
+app.UseCors("AllowAll");
 
 app.UseResponseCompression();
 app.UseHttpsRedirection();
