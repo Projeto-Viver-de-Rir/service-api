@@ -22,6 +22,7 @@ public class GetAllEventPresencesHandler : IRequestHandler<GetAllEventPresencesR
     {
         var eventPresences = _context.EventPresences;
         return await eventPresences.ProjectToType<GetEventPresenceResponse>()
+            .WhereIf(request.EventId.HasValue, x => x.EventId == request.EventId)
             .OrderBy(x => x.VolunteerId)
             .ToPaginatedListAsync(request.CurrentPage, request.PageSize);
     }

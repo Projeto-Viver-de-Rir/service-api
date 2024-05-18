@@ -4,6 +4,7 @@ using Boilerplate.Application.Features.Debts.CreateDebt;
 using Boilerplate.Application.Features.Debts.DeleteDebt;
 using Boilerplate.Application.Features.Debts.GetAllDebts;
 using Boilerplate.Application.Features.Debts.GetDebtById;
+using Boilerplate.Application.Features.Debts.PayDebt;
 using Boilerplate.Application.Features.Debts.UpdateDebt;
 using Boilerplate.Domain.Entities.Common;
 using MediatR;
@@ -52,6 +53,15 @@ public static class DebtEndpoints
             return result.ToMinimalApiResult();
         });
 
+        group.MapPatch("{id}", async (IMediator mediator, DebtId id, PayDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
+        {
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            
+            var result = await mediator.Send(request with { Id = id, AuditFields = audit });
+            return result.ToMinimalApiResult();
+        });        
+        
         group.MapDelete("{id}", async (IMediator mediator, DebtId id, IHttpContextAccessor httpContextAccessor) =>
         {
             var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
