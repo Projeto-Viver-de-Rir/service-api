@@ -16,4 +16,6 @@ public class EventPresence : Entity<EventPresenceId>
     public DateTime CreatedAt { get; set; }
     public UserId? UpdatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
+
+    public virtual Volunteer Volunteer { get; set; }
 }

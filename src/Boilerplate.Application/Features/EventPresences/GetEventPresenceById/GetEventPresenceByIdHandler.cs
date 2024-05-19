@@ -19,9 +19,12 @@ public class GetEventPresenceByIdHandler : IRequestHandler<GetEventPresenceByIdR
     }
     public async Task<Result<GetEventPresenceResponse>> Handle(GetEventPresenceByIdRequest request, CancellationToken cancellationToken)
     {
-        var eventPresence = await _context.EventPresences.FirstOrDefaultAsync(x => x.Id == request.Id,
-            cancellationToken: cancellationToken);
-        if (eventPresence is null) return Result.NotFound();
+        var eventPresence = await _context.EventPresences.Include(p => p.Volunteer)
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken: cancellationToken);
+        
+        if (eventPresence is null) 
+            return Result.NotFound();
+        
         return eventPresence.Adapt<GetEventPresenceResponse>();
     }
 }
