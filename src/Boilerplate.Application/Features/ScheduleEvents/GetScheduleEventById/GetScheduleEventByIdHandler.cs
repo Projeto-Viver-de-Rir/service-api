@@ -19,9 +19,14 @@ public class GetScheduleEventByIdHandler : IRequestHandler<GetScheduleEventByIdR
     }
     public async Task<Result<GetScheduleEventResponse>> Handle(GetScheduleEventByIdRequest request, CancellationToken cancellationToken)
     {
-        var debt = await _context.ScheduleEvents.FirstOrDefaultAsync(x => x.Id == request.Id,
+        var debt = await _context.ScheduleEvents
+            .Include(p => p.Coordinators)
+            .FirstOrDefaultAsync(x => x.Id == request.Id,
             cancellationToken: cancellationToken);
-        if (debt is null) return Result.NotFound();
+        
+        if (debt is null) 
+            return Result.NotFound();
+        
         return debt.Adapt<GetScheduleEventResponse>();
     }
 }

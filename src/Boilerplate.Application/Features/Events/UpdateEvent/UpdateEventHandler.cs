@@ -1,8 +1,10 @@
 ﻿using Ardalis.Result;
 using Boilerplate.Application.Common;
+using Boilerplate.Domain.Entities;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,10 +35,50 @@ public class UpdateEventHandler : IRequestHandler<UpdateEventRequest, Result<Get
         originalEvent.Occupancy = request.Occupancy;
         originalEvent.Status = request.Status;
         originalEvent.UpdatedBy = request.AuditFields!.StartedBy;
-        originalEvent.UpdatedAt = request.AuditFields!.StartedAt;        
+        originalEvent.UpdatedAt = request.AuditFields!.StartedAt;
 
         _context.Events.Update(originalEvent);
+        
+        var originalCoordinators = await _context.EventCoordinators
+            .Where(p => p.EventId == request.Id).Select(p => p.VolunteerId).ToListAsync(cancellationToken);
+        
+        if (request.Coordinators != null)
+        {
+            var coordinatorsToInsert = request.Coordinators.Except(originalCoordinators);
+            
+            foreach (var item in coordinatorsToInsert)
+            {
+                var coordinator = new EventCoordinator()
+                {
+                    EventId = request.Id,
+                    VolunteerId = item,
+                    CreatedBy = request.AuditFields!.StartedBy,
+                    CreatedAt = request.AuditFields!.StartedAt
+                };
+                
+                _context.EventCoordinators.Add(coordinator);
+            }
+        }
+        
+        if (request.Coordinators != null)
+        {
+            var coordinatorsToRemove = originalCoordinators.Except(request.Coordinators);
+
+            foreach (var item in coordinatorsToRemove)
+            {
+                var coordinator = await _context.EventCoordinators
+                    .Where(p => p.VolunteerId == item && p.EventId == request.Id)
+                    .FirstOrDefaultAsync(cancellationToken);
+                
+                _context.EventCoordinators.Remove(coordinator);
+            }
+        }
+        
         await _context.SaveChangesAsync(cancellationToken);
-        return originalEvent.Adapt<GetEventResponse>();
+        
+        var response = originalEvent.Adapt<GetEventResponse>();
+        //response.Coordinators = request.Coordinators;
+        
+        return response;
     }
 }

@@ -1,6 +1,8 @@
-﻿using Boilerplate.Domain.Entities.Common;
+﻿using Boilerplate.Application.Common.Responses;
+using Boilerplate.Domain.Entities.Common;
 using Boilerplate.Domain.Entities.Enums;
 using System;
+using System.Collections.Generic;
 
 namespace Boilerplate.Application.Features.Events;
 
@@ -14,5 +16,12 @@ public record GetEventResponse
     public string? MeetingPoint { get; init; }
     public DateTime? HappenAt { get; init; }
     public int Occupancy { get; init; }
-    public EventStatus Status { get; init; }  
+    public EventStatus Status { get; init; }
+    public IEnumerable<Coordinator>? Coordinators { get; set; }
+}
+
+public record Coordinator
+{
+    public EventCoordinatorId Id { get; set; }
+    public VolunteerCard Volunteer { get; set; }
 }

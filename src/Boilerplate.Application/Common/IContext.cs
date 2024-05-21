@@ -15,7 +15,9 @@ public interface IContext : IAsyncDisposable, IDisposable
     public DbSet<Debt> Debts { get; }
     public DbSet<Event> Events { get; }
     public DbSet<EventPresence> EventPresences { get; }
+    public DbSet<EventCoordinator> EventCoordinators { get; }
     public DbSet<ScheduleEvent> ScheduleEvents { get; }
+    public DbSet<ScheduleEventCoordinator> ScheduleEventCoordinators { get; }
     public DbSet<Team> Teams { get; }
     public DbSet<Config> Configs { get; }
     

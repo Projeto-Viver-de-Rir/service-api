@@ -4,6 +4,8 @@ using Boilerplate.Domain.Entities.Common;
 using Boilerplate.Domain.Entities.Enums;
 using MediatR;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Boilerplate.Application.Features.ScheduleEvents.UpdateScheduleEvent;
@@ -22,6 +24,7 @@ public record UpdateScheduleEventRequest : IRequest<Result<GetScheduleEventRespo
     public DayOfWeek DayOfWeek { get; set; }
     public ScheduleEventInterval Occurrence { get; set; }
     public TimeOnly Schedule { get; set; }
+    public IEnumerable<VolunteerId>? Coordinators { get; init; } = Enumerable.Empty<VolunteerId>();
 
     [JsonIgnore]
     public AuditData? AuditFields { get; init; }

@@ -19,9 +19,14 @@ public class GetEventByIdHandler : IRequestHandler<GetEventByIdRequest, Result<G
     }
     public async Task<Result<GetEventResponse>> Handle(GetEventByIdRequest request, CancellationToken cancellationToken)
     {
-        var eventItem = await _context.Events.FirstOrDefaultAsync(x => x.Id == request.Id,
+        var eventItem = await _context.Events
+            .Include(p => p.Coordinators)
+            .FirstOrDefaultAsync(x => x.Id == request.Id,
             cancellationToken: cancellationToken);
-        if (eventItem is null) return Result.NotFound();
+        
+        if (eventItem is null) 
+            return Result.NotFound();
+        
         return eventItem.Adapt<GetEventResponse>();
     }
 }

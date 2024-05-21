@@ -19,6 +19,7 @@ public class Volunteer : Entity<VolunteerId>
     public string? Comments { get; set; }
     public string? Identifier { get; set; }
     public UserId AccountId { get; set; }
+    public string? Photo { get; set; }
     
     public UserId CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }

@@ -24,4 +24,5 @@ public class Event : Entity<EventId>
     public DateTime? UpdatedAt { get; set; }
     
     public virtual ICollection<EventPresence> Presences { get; set; }
+    public virtual ICollection<EventCoordinator> Coordinators { get; set; }
 }

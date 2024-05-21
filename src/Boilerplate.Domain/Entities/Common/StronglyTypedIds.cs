@@ -79,3 +79,21 @@ public partial struct EventPresenceId : IGuid
         return new EventPresenceId(guid);
     }
 }
+
+[StronglyTypedId]
+public partial struct EventCoordinatorId : IGuid
+{
+    public static implicit operator EventCoordinatorId(Guid guid)
+    {
+        return new EventCoordinatorId(guid);
+    }
+}
+
+[StronglyTypedId]
+public partial struct ScheduleEventCoordinatorId : IGuid
+{
+    public static implicit operator ScheduleEventCoordinatorId(Guid guid)
+    {
+        return new ScheduleEventCoordinatorId(guid);
+    }
+}

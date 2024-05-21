@@ -19,4 +19,5 @@ public record GetVolunteerResponse
     public string? Comments { get; init; }
     public string? Identifier { get; init; }
     public UserId AccountId { get; init; }
+    public string? Photo { get; init; }
 }

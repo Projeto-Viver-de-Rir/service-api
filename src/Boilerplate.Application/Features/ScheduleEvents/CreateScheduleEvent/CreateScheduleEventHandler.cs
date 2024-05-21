@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using Boilerplate.Application.Common;
+using Boilerplate.Domain.Entities;
 using Mapster;
 using MediatR;
 using System.Threading;
@@ -24,7 +25,28 @@ public class CreateScheduleEventHandler : IRequestHandler<CreateScheduleEventReq
         created.CreatedAt = request.AuditFields!.StartedAt;
 
         _context.ScheduleEvents.Add(created);
+
+        if (request.Coordinators != null)
+        {
+            foreach (var item in request.Coordinators)
+            {
+                var scheduleEventCoordinator = new ScheduleEventCoordinator()
+                {
+                    ScheduleEventId = created.Id,
+                    VolunteerId = item,
+                    CreatedBy = request.AuditFields!.StartedBy,
+                    CreatedAt = request.AuditFields!.StartedAt
+                };
+
+                _context.ScheduleEventCoordinators.Add(scheduleEventCoordinator);
+            }
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
-        return created.Adapt<GetScheduleEventResponse>();
+        
+        var response = created.Adapt<GetScheduleEventResponse>();
+        //response.Coordinators = request.Coordinators;
+        
+        return response;
     }
 }
