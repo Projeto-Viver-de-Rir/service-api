@@ -42,6 +42,12 @@ builder.Services.AddMediatRSetup();
 // Exception handler
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 
+// Cookies to make it easier
+builder.Services.ConfigureApplicationCookie(options => { options.Cookie.SameSite = SameSiteMode.None;});
+
+// Adding email provider
+builder.Services.AddEmailSetup(builder.Configuration);
+
 builder.Logging.ClearProviders();
 
 // Add serilog
