@@ -6,7 +6,9 @@ using Institutional.Application.Features.Configs.GetAllConfig;
 using Institutional.Application.Features.Configs.GetConfigById;
 using Institutional.Application.Features.Configs.UpdateConfig;
 using Institutional.Domain.Entities.Common;
+using Institutional.Domain.Entities.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -22,7 +24,7 @@ public static class ConfigEndpoints
             .WithTags("config")
             .RequireAuthorization();
         
-        group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllConfigsRequest request) =>
+        group.MapGet("/", [Authorize(Roles = $"{nameof(TeamType.Administrative)}")] async (IMediator mediator, [AsParameters] GetAllConfigsRequest request) =>
         {
             var result = await mediator.Send(request);
             return result;
@@ -34,7 +36,7 @@ public static class ConfigEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapPost("/", async (IMediator mediator, CreateConfigRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPost("/", [Authorize(Roles = $"{nameof(TeamType.Administrative)}")] async (IMediator mediator, CreateConfigRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -43,7 +45,7 @@ public static class ConfigEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapPut("{id}", async (IMediator mediator, ConfigId id, UpdateConfigRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPut("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)}")] async (IMediator mediator, ConfigId id, UpdateConfigRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -52,7 +54,7 @@ public static class ConfigEndpoints
             return result.ToMinimalApiResult();
         });
         
-        group.MapDelete("{id}", async (IMediator mediator, ConfigId id) =>
+        group.MapDelete("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)}")] async (IMediator mediator, ConfigId id) =>
         {
             var result = await mediator.Send(new DeleteConfigRequest(id));
             return result.ToMinimalApiResult();

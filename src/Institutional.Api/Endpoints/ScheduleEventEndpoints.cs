@@ -6,7 +6,9 @@ using Institutional.Application.Features.ScheduleEvents.GetAllScheduleEvents;
 using Institutional.Application.Features.ScheduleEvents.GetScheduleEventById;
 using Institutional.Application.Features.ScheduleEvents.UpdateScheduleEvent;
 using Institutional.Domain.Entities.Common;
+using Institutional.Domain.Entities.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -22,19 +24,19 @@ public static class ScheduleScheduleEventEndpoints
             .WithTags("schedule-event")
             .RequireAuthorization();
         
-        group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllScheduleEventsRequest request) =>
+        group.MapGet("/", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Operational)}")] async (IMediator mediator, [AsParameters] GetAllScheduleEventsRequest request) =>
         {
             var result = await mediator.Send(request);
             return result;
         });
 
-        group.MapGet("{id}", async (IMediator mediator, ScheduleEventId id) =>
+        group.MapGet("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Operational)}")] async (IMediator mediator, ScheduleEventId id) =>
         {
             var result = await mediator.Send(new GetScheduleEventByIdRequest(id));
             return result.ToMinimalApiResult();
         });
 
-        group.MapPost("/", async (IMediator mediator, CreateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPost("/", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Operational)}")] async (IMediator mediator, CreateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -43,7 +45,7 @@ public static class ScheduleScheduleEventEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapPut("{id}", async (IMediator mediator, ScheduleEventId id, UpdateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPut("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Operational)}")] async (IMediator mediator, ScheduleEventId id, UpdateScheduleEventRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -52,7 +54,7 @@ public static class ScheduleScheduleEventEndpoints
             return result.ToMinimalApiResult();
         });
         
-        group.MapDelete("{id}", async (IMediator mediator, ScheduleEventId id, IHttpContextAccessor httpContextAccessor) =>
+        group.MapDelete("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Operational)}")] async (IMediator mediator, ScheduleEventId id, IHttpContextAccessor httpContextAccessor) =>
         {
             var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             

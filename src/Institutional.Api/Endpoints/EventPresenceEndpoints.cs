@@ -6,7 +6,9 @@ using Institutional.Application.Features.EventPresences.GetAllEventPresences;
 using Institutional.Application.Features.EventPresences.GetEventPresenceById;
 using Institutional.Application.Features.EventPresences.UpdateEventPresence;
 using Institutional.Domain.Entities.Common;
+using Institutional.Domain.Entities.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -43,7 +45,7 @@ public static class EventPresenceEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapPut("{id}", async (IMediator mediator, EventPresenceId id, UpdateEventPresenceRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPut("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Operational)}")] async (IMediator mediator, EventPresenceId id, UpdateEventPresenceRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -52,7 +54,7 @@ public static class EventPresenceEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapDelete("{id}", async (IMediator mediator, EventPresenceId id, IHttpContextAccessor httpContextAccessor) =>
+        group.MapDelete("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Operational)}")] async (IMediator mediator, EventPresenceId id, IHttpContextAccessor httpContextAccessor) =>
         {
             var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             

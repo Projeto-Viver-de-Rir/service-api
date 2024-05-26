@@ -3,5 +3,6 @@
 public enum TeamStatus
 {
     Inactive = 0,
-    Active = 1
+    Active = 1,
+    Shadow = 2
 }

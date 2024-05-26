@@ -6,7 +6,9 @@ using Institutional.Application.Features.Volunteers.GetAllVolunteers;
 using Institutional.Application.Features.Volunteers.GetVolunteerById;
 using Institutional.Application.Features.Volunteers.UpdateVolunteer;
 using Institutional.Domain.Entities.Common;
+using Institutional.Domain.Entities.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -52,7 +54,7 @@ public static class VolunteerEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapDelete("{id}", async (IMediator mediator, VolunteerId id, IHttpContextAccessor httpContextAccessor) =>
+        group.MapDelete("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Operational)}")] async (IMediator mediator, VolunteerId id, IHttpContextAccessor httpContextAccessor) =>
         {
             var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             

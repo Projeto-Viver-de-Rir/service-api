@@ -28,6 +28,7 @@ builder.Services.AddApplicationSetup();
 // Add identity stuff
 builder.Services
     .AddIdentityApiEndpoints<ApplicationUser>()
+    .AddRoles<ApplicationRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 // Request response compression

@@ -2,7 +2,9 @@
 using Institutional.Application.Features.Accounts.GetImpersonate;
 using Institutional.Application.Features.Accounts.GetMyself;
 using Institutional.Domain.Entities.Common;
+using Institutional.Domain.Entities.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -27,7 +29,7 @@ public static class AccountEndpoints
             return result.ToMinimalApiResult();
         });
         
-        group.MapGet("/impersonate/{id}", async (IMediator mediator, VolunteerId id, IHttpContextAccessor httpContextAccessor) =>
+        group.MapGet("/impersonate/{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)}")] async (IMediator mediator, VolunteerId id, IHttpContextAccessor httpContextAccessor) =>
         {
             var result = await mediator.Send(new GetImpersonateRequest(id));
             return result.ToMinimalApiResult();

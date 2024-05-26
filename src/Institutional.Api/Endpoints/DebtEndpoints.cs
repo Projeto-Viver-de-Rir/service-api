@@ -7,7 +7,9 @@ using Institutional.Application.Features.Debts.GetDebtById;
 using Institutional.Application.Features.Debts.PayDebt;
 using Institutional.Application.Features.Debts.UpdateDebt;
 using Institutional.Domain.Entities.Common;
+using Institutional.Domain.Entities.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -35,7 +37,7 @@ public static class DebtEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapPost("/", async (IMediator mediator, CreateDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPost("/", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Fiscal)}")] async (IMediator mediator, CreateDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -44,7 +46,7 @@ public static class DebtEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapPut("{id}", async (IMediator mediator, DebtId id, UpdateDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPut("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)}")] async (IMediator mediator, DebtId id, UpdateDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -53,7 +55,7 @@ public static class DebtEndpoints
             return result.ToMinimalApiResult();
         });
 
-        group.MapPatch("{id}", async (IMediator mediator, DebtId id, PayDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPatch("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)}")] async (IMediator mediator, DebtId id, PayDebtRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -62,7 +64,7 @@ public static class DebtEndpoints
             return result.ToMinimalApiResult();
         });        
         
-        group.MapDelete("{id}", async (IMediator mediator, DebtId id, IHttpContextAccessor httpContextAccessor) =>
+        group.MapDelete("{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Fiscal)}")] async (IMediator mediator, DebtId id, IHttpContextAccessor httpContextAccessor) =>
         {
             var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             
