@@ -2,6 +2,7 @@
 using Institutional.Domain.Entities.Enums;
 using MassTransit;
 using System;
+using System.Collections.Generic;
 
 namespace Institutional.Domain.Entities;
 
@@ -12,6 +13,7 @@ public class Team : Entity<TeamId>
     public string? Description { get; set; }
     public TeamType Type { get; set; }
     public TeamStatus Status { get; set; }
+    public virtual ICollection<TeamMember> Members { get; set; }
     
     public UserId CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }

@@ -54,6 +54,15 @@ public partial struct TeamId : IGuid
 }
 
 [StronglyTypedId]
+public partial struct TeamMemberId : IGuid
+{
+    public static implicit operator TeamMemberId(Guid guid)
+    {
+        return new TeamMemberId(guid);
+    }
+}
+
+[StronglyTypedId]
 public partial struct ConfigId : IGuid
 {
     public static implicit operator ConfigId(Guid guid)

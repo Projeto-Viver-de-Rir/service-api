@@ -19,9 +19,14 @@ public class GetTeamByIdHandler : IRequestHandler<GetTeamByIdRequest, Result<Get
     }
     public async Task<Result<GetTeamResponse>> Handle(GetTeamByIdRequest request, CancellationToken cancellationToken)
     {
-        var team = await _context.Teams.FirstOrDefaultAsync(x => x.Id == request.Id,
+        var team = await _context.Teams
+            .Include(p => p.Members)
+            .FirstOrDefaultAsync(x => x.Id == request.Id,
             cancellationToken: cancellationToken);
-        if (team is null) return Result.NotFound();
+        
+        if (team is null) 
+            return Result.NotFound();
+        
         return team.Adapt<GetTeamResponse>();
     }
 }

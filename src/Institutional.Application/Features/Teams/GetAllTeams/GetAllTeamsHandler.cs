@@ -21,6 +21,7 @@ public class GetAllTeamsHandler : IRequestHandler<GetAllTeamsRequest, PaginatedL
     public async Task<PaginatedList<GetTeamResponse>> Handle(GetAllTeamsRequest request, CancellationToken cancellationToken)
     {
         var teams = _context.Teams
+            .Include(p => p.Members)
             .WhereIf(!string.IsNullOrEmpty(request.Name), x => EF.Functions.Like(x.Name, $"%{request.Name}%"))
             .WhereIf(request.TeamType != null, x => x.Type == request.TeamType);
         return await teams.ProjectToType<GetTeamResponse>()

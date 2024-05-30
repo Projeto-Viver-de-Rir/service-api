@@ -17,9 +17,13 @@ public class DeleteTeamHandler : IRequestHandler<DeleteTeamRequest, Result>
     public async Task<Result> Handle(DeleteTeamRequest request, CancellationToken cancellationToken)
     {
         var team = await _context.Teams.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-        if (team is null) return Result.NotFound();
+        
+        if (team is null) 
+            return Result.NotFound();
+        
         _context.Teams.Remove(team);
         await _context.SaveChangesAsync(cancellationToken);
+        
         return Result.Success();
     }
 }

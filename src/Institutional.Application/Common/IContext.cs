@@ -19,6 +19,7 @@ public interface IContext : IAsyncDisposable, IDisposable
     public DbSet<ScheduleEvent> ScheduleEvents { get; }
     public DbSet<ScheduleEventCoordinator> ScheduleEventCoordinators { get; }
     public DbSet<Team> Teams { get; }
+    public DbSet<TeamMember> TeamMembers { get; }
     public DbSet<Config> Configs { get; }
     
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

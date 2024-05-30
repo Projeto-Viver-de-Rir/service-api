@@ -19,6 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<ScheduleEvent> ScheduleEvents { get; set; } = null!;
     public DbSet<ScheduleEventCoordinator> ScheduleEventCoordinators { get; set; } = null!;
     public DbSet<Team> Teams { get; set; } = null!;
+    public DbSet<TeamMember> TeamMembers { get; set; } = null!;
     public DbSet<Config> Configs { get; set; } = null!;
     
     protected override void OnModelCreating(ModelBuilder builder)
@@ -33,6 +34,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
         builder.ApplyConfigurationsFromAssembly(typeof(ScheduleEventCoordinatorConfiguration).Assembly);
         builder.ApplyConfigurationsFromAssembly(typeof(TeamConfiguration).Assembly);
         builder.ApplyConfigurationsFromAssembly(typeof(ConfigConfiguration).Assembly);
+        builder.ApplyConfigurationsFromAssembly(typeof(TeamMemberConfiguration).Assembly);
         
     }
 }

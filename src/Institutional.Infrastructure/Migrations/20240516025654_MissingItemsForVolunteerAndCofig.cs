@@ -102,6 +102,19 @@ namespace Institutional.Infrastructure.Migrations
                 type: "text",
                 nullable: false,
                 defaultValue: "");
+            
+            // Configuration Base
+            migrationBuilder.DeleteData(table: "Configs", 
+                keyColumn: "Id",
+                keyValue: "edf35564-d046-41dd-8cda-ad1b536d72b8");
+            
+            migrationBuilder.DeleteData(table: "Configs", 
+                keyColumn: "Id",
+                keyValue: "ae9d1269-dda3-4aa6-9217-972d87b932d3");
+            
+            migrationBuilder.DeleteData(table: "Configs", 
+                keyColumn: "Id",
+                keyValue: "3cb829da-241f-47f9-9013-cdee83d75f18");
         }
     }
 }
