@@ -47,7 +47,7 @@ builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.ConfigureApplicationCookie(options => { options.Cookie.SameSite = SameSiteMode.None;});
 
 // Adding email provider
-builder.Services.AddEmailSetup(builder.Configuration);
+//builder.Services.AddEmailSetup(builder.Configuration);
 
 builder.Logging.ClearProviders();
 
