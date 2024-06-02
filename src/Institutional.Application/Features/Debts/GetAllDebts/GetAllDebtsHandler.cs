@@ -22,6 +22,7 @@ public class GetAllDebtsHandler : IRequestHandler<GetAllDebtsRequest, PaginatedL
     {
         var debts = _context.Debts
             .Include(p => p.Volunteer)
+            .WhereIf(request.Paid.HasValue, x => x.PaidAt.HasValue == request.Paid.Value)
             .WhereIf(!string.IsNullOrEmpty(request.Name), x => EF.Functions.Like(x.Name, $"%{request.Name}%"))
             .WhereIf(request.VolunteerId.HasValue, x => x.VolunteerId == request.VolunteerId);
         return await debts.ProjectToType<GetDebtResponse>()

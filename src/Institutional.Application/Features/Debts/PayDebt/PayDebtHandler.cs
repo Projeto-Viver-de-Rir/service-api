@@ -27,14 +27,14 @@ public class PayDebtHandler : IRequestHandler<PayDebtRequest, Result<GetDebtResp
         if (originalDebt == null) 
             return Result.NotFound();
 
-        originalDebt.PaidAt = request.PaidAt;
-        originalDebt.UpdatedBy = request.AuditFields!.StartedBy;
-        originalDebt.UpdatedAt = request.AuditFields!.StartedAt;            
-
         if (!originalDebt.PaidAt.HasValue && request.PaidAt.HasValue)
             originalDebt.PaidBy = request.AuditFields!.StartedBy;
         else if (originalDebt.PaidAt.HasValue && !request.PaidAt.HasValue)
-            originalDebt.PaidBy = null;
+            originalDebt.PaidBy = null;        
+        
+        originalDebt.PaidAt = request.PaidAt;
+        originalDebt.UpdatedBy = request.AuditFields!.StartedBy;
+        originalDebt.UpdatedAt = request.AuditFields!.StartedAt;            
 
         _context.Debts.Update(originalDebt);
         await _context.SaveChangesAsync(cancellationToken);

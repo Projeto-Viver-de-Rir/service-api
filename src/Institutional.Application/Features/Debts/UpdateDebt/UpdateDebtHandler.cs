@@ -27,6 +27,11 @@ public class UpdateDebtHandler : IRequestHandler<UpdateDebtRequest, Result<GetDe
         if (originalDebt == null) 
             return Result.NotFound();
 
+        if (!originalDebt.PaidAt.HasValue && request.PaidAt.HasValue)
+            originalDebt.PaidBy = request.AuditFields!.StartedBy;
+        else if (originalDebt.PaidAt.HasValue && !request.PaidAt.HasValue)
+            originalDebt.PaidBy = null;
+        
         originalDebt.Name = request.Name;
         originalDebt.Description = request.Description;
         originalDebt.Amount = request.Amount;
@@ -34,12 +39,7 @@ public class UpdateDebtHandler : IRequestHandler<UpdateDebtRequest, Result<GetDe
         originalDebt.VolunteerId = request.VolunteerId;
         originalDebt.PaidAt = request.PaidAt;
         originalDebt.UpdatedBy = request.AuditFields!.StartedBy;
-        originalDebt.UpdatedAt = request.AuditFields!.StartedAt;            
-
-        if (!originalDebt.PaidAt.HasValue && request.PaidAt.HasValue)
-            originalDebt.PaidBy = request.AuditFields!.StartedBy;
-        else if (originalDebt.PaidAt.HasValue && !request.PaidAt.HasValue)
-            originalDebt.PaidBy = null;
+        originalDebt.UpdatedAt = request.AuditFields!.StartedAt;
 
         _context.Debts.Update(originalDebt);
         await _context.SaveChangesAsync(cancellationToken);
