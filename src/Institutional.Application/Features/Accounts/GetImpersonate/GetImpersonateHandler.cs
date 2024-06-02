@@ -24,7 +24,7 @@ public class GetImpersonateHandler : IRequestHandler<GetImpersonateRequest, Resu
 
         if (volunteer is null) 
             return Result.NotFound();
-
+        
         return volunteer.Adapt<GetMyselfResponse>();
     }
 }

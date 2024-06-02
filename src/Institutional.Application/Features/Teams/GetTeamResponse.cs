@@ -1,4 +1,5 @@
-﻿using Institutional.Domain.Entities.Common;
+﻿using Institutional.Application.Common.Responses;
+using Institutional.Domain.Entities.Common;
 using Institutional.Domain.Entities.Enums;
 using System;
 using System.Collections.Generic;
@@ -24,11 +25,4 @@ public record Member
 {
     public TeamMemberId Id { get; set; }
     public VolunteerWithAccount Volunteer { get; set; }
-}
-
-public record VolunteerWithAccount
-{
-    public VolunteerId Id { get; set; }
-    public string Name { get; set; }
-    public UserId AccountId { get; set; }
 }

@@ -21,6 +21,7 @@ public class GetAllDebtsHandler : IRequestHandler<GetAllDebtsRequest, PaginatedL
     public async Task<PaginatedList<GetDebtResponse>> Handle(GetAllDebtsRequest request, CancellationToken cancellationToken)
     {
         var debts = _context.Debts
+            .Include(p => p.Volunteer)
             .WhereIf(!string.IsNullOrEmpty(request.Name), x => EF.Functions.Like(x.Name, $"%{request.Name}%"))
             .WhereIf(request.VolunteerId.HasValue, x => x.VolunteerId == request.VolunteerId);
         return await debts.ProjectToType<GetDebtResponse>()

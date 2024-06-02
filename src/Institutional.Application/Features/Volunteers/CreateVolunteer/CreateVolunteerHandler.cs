@@ -39,6 +39,7 @@ public class CreateVolunteerHandler : IRequestHandler<CreateVolunteerRequest, Re
             
             if (created.AccountId == UserId.Empty)
                 created.AccountId = request.AuditFields!.StartedBy;
+            
             created.CreatedBy = request.AuditFields!.StartedBy;
             created.CreatedAt = request.AuditFields!.StartedAt;
 

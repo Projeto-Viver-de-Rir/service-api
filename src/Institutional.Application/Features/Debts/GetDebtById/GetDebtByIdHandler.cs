@@ -19,9 +19,14 @@ public class GetDebtByIdHandler : IRequestHandler<GetDebtByIdRequest, Result<Get
     }
     public async Task<Result<GetDebtResponse>> Handle(GetDebtByIdRequest request, CancellationToken cancellationToken)
     {
-        var debt = await _context.Debts.FirstOrDefaultAsync(x => x.Id == request.Id,
+        var debt = await _context.Debts
+            .Include(p => p.Volunteer)
+            .FirstOrDefaultAsync(x => x.Id == request.Id,
             cancellationToken: cancellationToken);
-        if (debt is null) return Result.NotFound();
+        
+        if (debt is null) 
+            return Result.NotFound();
+        
         return debt.Adapt<GetDebtResponse>();
     }
 }

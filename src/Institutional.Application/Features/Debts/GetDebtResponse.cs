@@ -1,4 +1,5 @@
-﻿using Institutional.Domain.Entities.Common;
+﻿using Institutional.Application.Common.Responses;
+using Institutional.Domain.Entities.Common;
 using Institutional.Domain.Entities.Enums;
 using System;
 
@@ -14,4 +15,6 @@ public record GetDebtResponse
     public VolunteerId VolunteerId { get; init; }
     public DateTime? PaidAt { get; init; }
     public UserId? PaidBy { get; init; }
+    
+    public VolunteerWithAccount Volunteer { get; init; }
 }

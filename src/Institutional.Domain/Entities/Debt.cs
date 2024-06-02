@@ -19,4 +19,6 @@ public class Debt : Entity<DebtId>
     public DateTime CreatedAt { get; set; }
     public UserId? UpdatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    
+    public virtual Volunteer Volunteer { get; set; }
 }

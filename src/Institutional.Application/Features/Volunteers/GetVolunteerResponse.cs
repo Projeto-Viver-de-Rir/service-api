@@ -20,4 +20,12 @@ public record GetVolunteerResponse
     public string? Identifier { get; init; }
     public UserId AccountId { get; init; }
     public string? Photo { get; init; }
+    
+    public string? Email { get; init; }
+    public string? Phone { get; init; }
+    
+    public int LastMonthAttendances { get; init; }
+    public int ActualMonthAttendances { get; init; }
+    public int LastMonthAbsences { get; init; }
+    public int ActualMonthAbsences { get; init; }
 }
