@@ -24,7 +24,6 @@ public record UpdateVolunteerRequest : IRequest<Result<GetVolunteerResponse>>
     public string? Availability { get; init; }
     public string? Comments { get; init; }
     public string? Identifier { get; init; }
-    public UserId AccountId { get; init; }
     public string? Photo { get; init; }
     
     [JsonIgnore]

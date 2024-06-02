@@ -35,7 +35,7 @@ public class UpdateVolunteerHandler : IRequestHandler<UpdateVolunteerRequest, Re
         originalVolunteer.Availability = request.Availability;
         originalVolunteer.Comments = request.Comments;
         originalVolunteer.Identifier = request.Identifier;
-        originalVolunteer.AccountId = request.AccountId;
+        originalVolunteer.Photo = request.Photo;
         originalVolunteer.UpdatedBy = request.AuditFields!.StartedBy;
         originalVolunteer.UpdatedAt = request.AuditFields!.StartedAt;
         
