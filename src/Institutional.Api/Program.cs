@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,18 +84,26 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-app.UseRouting();
-
-app.UseSwaggerSetup();
 app.UseHsts();
 app.UseCors("AllowAll");
+
+// Swagger
+app.UseSwaggerSetup();
+
+// SPA
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.UseRouting();
+app.MapFallbackToFile("index.html");  
 
 app.UseResponseCompression();
 app.UseHttpsRedirection();
 
+// Auth
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Endpoints
 app.MapAccountEndpoints();
 app.MapVolunteerEndpoints();
 app.MapDebtEndpoints();
