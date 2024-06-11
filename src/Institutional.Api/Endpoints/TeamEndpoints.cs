@@ -31,12 +31,8 @@ public static class TeamEndpoints
             .WithTags("team")
             .RequireAuthorization();
         
-        group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllTeamsRequest request, IHttpContextAccessor httpContextAccessor, IUserRoleStore<ApplicationUser> roleStore) =>
+        group.MapGet("/", [Authorize(Roles = $"{nameof(TeamType.Administrative)}")] async (IMediator mediator, [AsParameters] GetAllTeamsRequest request) =>
         {
-            var t = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
-            await roleStore.IsInRoleAsync(new ApplicationUser() { Id = Guid.Parse(t) }, "Administrative", CancellationToken.None);
-            
             var result = await mediator.Send(request);
             return result;
         });
