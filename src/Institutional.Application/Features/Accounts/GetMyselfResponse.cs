@@ -1,5 +1,6 @@
 ﻿using Institutional.Domain.Entities.Common;
 using System;
+using System.Collections.Generic;
 
 namespace Institutional.Application.Features.Accounts;
 
@@ -26,4 +27,7 @@ public record GetMyselfResponse
     public int ActualMonthAttendances { get; init; }
     public int LastMonthAbsences { get; init; }
     public int ActualMonthAbsences { get; init; }
+
+    public IEnumerable<string>? Permissions { get; init; } =
+        new[] { "volunteer", "fiscal", "advisory", "legal", "operational", "administrative" };
 }
