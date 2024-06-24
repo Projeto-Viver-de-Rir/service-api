@@ -24,5 +24,5 @@ public record GetTeamResponse
 public record Member
 {
     public TeamMemberId Id { get; set; }
-    public VolunteerWithAccount Volunteer { get; set; }
+    public VolunteerCard Volunteer { get; set; }
 }
