@@ -18,6 +18,7 @@ public record GetEventResponse
     public int Occupancy { get; init; }
     public EventStatus Status { get; init; }
     public IEnumerable<Coordinator>? Coordinators { get; set; }
+    public int Capacity { get; init; }
 }
 
 public record Coordinator
