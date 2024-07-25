@@ -35,15 +35,6 @@ public static class VolunteerEndpoints
             var result = await mediator.Send(new GetVolunteerByIdRequest(id));
             return result.ToMinimalApiResult();
         });
-
-        group.MapPost("/enroll", async (IMediator mediator, CreateVolunteerRequest request, IHttpContextAccessor httpContextAccessor) =>
-        {
-            var audit =
-                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
-            var result = await mediator.Send(request with { AuditFields = audit });
-            return result.ToMinimalApiResult();
-        });
         
         group.MapPost("/", async (IMediator mediator, CreateVolunteerRequest request, IHttpContextAccessor httpContextAccessor) =>
         {

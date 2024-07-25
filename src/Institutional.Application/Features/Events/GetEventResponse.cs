@@ -18,6 +18,8 @@ public record GetEventResponse
     public int Occupancy { get; init; }
     public EventStatus Status { get; init; }
     public IEnumerable<Coordinator>? Coordinators { get; set; }
+    
+    // TODO: Return correct capacity (Occupancy - ListOfEventPresence.Count())
     public int Capacity { get; init; }
 }
 

@@ -1,11 +1,11 @@
 ﻿using Institutional.Application.Common;
 using FluentValidation;
 
-namespace Institutional.Application.Features.Volunteers.EnrollVolunteer;
+namespace Institutional.Application.Features.Accounts.Volunteer;
 
-public class EnrollVolunteerValidator : AbstractValidator<EnrollVolunteerRequest>
+public class VolunteerValidator : AbstractValidator<VolunteerRequest>
 {
-    public EnrollVolunteerValidator()
+    public VolunteerValidator()
     {
         RuleLevelCascadeMode = ClassLevelCascadeMode;
 

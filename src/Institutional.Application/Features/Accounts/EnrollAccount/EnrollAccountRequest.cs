@@ -6,9 +6,9 @@ using MediatR;
 using System;
 using System.Text.Json.Serialization;
 
-namespace Institutional.Application.Features.Volunteers.EnrollVolunteer;
+namespace Institutional.Application.Features.Accounts.EnrollAccount;
 
-public record EnrollVolunteerRequest : IRequest<Result<GetVolunteerResponse>>
+public record EnrollAccountRequest : IRequest<Result<GetMyselfResponse>>
 {
     public string Name { get; init; } = null!;
     public string? Nickname { get; init; }
