@@ -53,6 +53,9 @@ builder.Services.ConfigureApplicationCookie(options => { options.Cookie.SameSite
 // Adding email provider
 builder.Services.AddEmailSetup(builder.Configuration);
 
+// Adding AWS provider
+builder.Services.AddAWSSetup(builder.Configuration);
+
 builder.Logging.ClearProviders();
 
 // Add serilog

@@ -5,6 +5,8 @@ using Institutional.Application.Features.Accounts.EnrollAccount;
 using Institutional.Application.Features.Accounts.GetMyself;
 using Institutional.Application.Features.Accounts.Volunteer;
 using Institutional.Infrastructure;
+using Institutional.Infrastructure.AWS;
+using Institutional.Infrastructure.AWS.Model;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -61,11 +63,24 @@ public static class AccountEndpoints
             return result.ToMinimalApiResult();
         });
         
-        group.MapPatch("/photo", async (IFormFile file) =>
+        group.MapPatch("/photo", async (IFormFile file, IStorageService storageService, IHttpContextAccessor httpContextAccessor) =>
         {
-            var tempFile = Path.GetTempFileName();
-            using var stream = File.OpenWrite(tempFile);
-            await file.CopyToAsync(stream);
+            var audit =
+                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            
+            await using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+
+            var fileExt = Path.GetExtension(file.FileName);
+            var docName = $"{audit!.StartedBy}.{fileExt}";
+
+            var s3Obj = new S3Object() {
+                BucketName = "InstitutionalApp",
+                InputStream = memoryStream,
+                Name = docName
+            };
+            
+            var result = await storageService.UploadFileAsync(s3Obj);
         });
         
         group.MapPatch("/volunteer", async (IMediator mediator, VolunteerRequest request, IHttpContextAccessor httpContextAccessor) =>
