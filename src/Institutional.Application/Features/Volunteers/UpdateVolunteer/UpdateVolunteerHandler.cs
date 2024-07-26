@@ -22,7 +22,9 @@ public class UpdateVolunteerHandler : IRequestHandler<UpdateVolunteerRequest, Re
     {
         var originalVolunteer = await _context.Volunteers
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-        if (originalVolunteer == null) return Result.NotFound();
+        
+        if (originalVolunteer == null) 
+            return Result.NotFound();
 
         originalVolunteer.Name = request.Name;
         originalVolunteer.Nickname = request.Nickname;

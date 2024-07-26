@@ -2,16 +2,15 @@
 using Institutional.Application.Common.Requests;
 using Institutional.Application.Features.Accounts.Account;
 using Institutional.Application.Features.Accounts.EnrollAccount;
-using Institutional.Application.Features.Accounts.GetImpersonate;
 using Institutional.Application.Features.Accounts.GetMyself;
 using Institutional.Application.Features.Accounts.Volunteer;
-using Institutional.Domain.Entities.Common;
-using Institutional.Domain.Entities.Enums;
+using Institutional.Infrastructure;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Security.Claims;
@@ -34,17 +33,21 @@ public static class AccountEndpoints
             return result.ToMinimalApiResult();
         });
         
-        group.MapGet("/impersonate/{id}", [Authorize(Roles = $"{nameof(TeamType.Administrative)}")] async (IMediator mediator, VolunteerId id, IHttpContextAccessor httpContextAccessor) =>
-        {
-            var result = await mediator.Send(new GetImpersonateRequest(id));
-            return result.ToMinimalApiResult();
-        });
-        
-        group.MapPatch("/account", async (IMediator mediator, AccountRequest request, IHttpContextAccessor httpContextAccessor) =>
+        group.MapPatch("/account", async (IMediator mediator, AccountRequest request, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager) =>
         {
             var audit =
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            
+            var user = await userManager.Users.SingleOrDefaultAsync(p => p.Id == audit.StartedBy);
+            
+            // Change PhoneNumber without verify token (for now) 
+            var phoneToken = await userManager.GenerateChangePhoneNumberTokenAsync(user, request.Phone);
+            await userManager.ChangePhoneNumberAsync(user, request.Phone, phoneToken);
 
+            // Change Email without verify token (for now)
+            var emailToken = await userManager.GenerateChangeEmailTokenAsync(user, request.Email);
+            await userManager.ChangeEmailAsync(user, request.Email, emailToken);
+            
             var result = await mediator.Send(request with { AuditFields = audit });
             return result.ToMinimalApiResult();
         });

@@ -1,12 +1,8 @@
 ﻿using Ardalis.Result;
 using Institutional.Application.Common;
-using Institutional.Domain.Entities.Common;
-using Institutional.Domain.Entities.Enums;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,11 +20,11 @@ public class VolunteerHandler : IRequestHandler<VolunteerRequest, Result<GetMyse
 
     public async Task<Result<GetMyselfResponse>> Handle(VolunteerRequest request, CancellationToken cancellationToken)
     {
-        // TODO: Change Guid.NewGuid()
-        
         var originalVolunteer = await _context.Volunteers
-            .FirstOrDefaultAsync(x => x.Id == Guid.NewGuid(), cancellationToken);
-        if (originalVolunteer == null) return Result.NotFound();
+            .FirstOrDefaultAsync(x => x.AccountId == request.AuditFields!.StartedBy, cancellationToken);
+        
+        if (originalVolunteer == null) 
+            return Result.NotFound();
 
         originalVolunteer.Name = request.Name;
         originalVolunteer.Nickname = request.Nickname;

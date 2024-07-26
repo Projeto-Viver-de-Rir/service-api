@@ -1,11 +1,9 @@
 ﻿using Ardalis.Result;
 using Institutional.Application.Common;
-using Institutional.Domain.Entities.Common;
 using Institutional.Domain.Entities.Enums;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,9 +35,7 @@ public class EnrollAccountHandler : IRequestHandler<EnrollAccountRequest, Result
         {
             var created = request.Adapt<Domain.Entities.Volunteer>();
             
-            if (created.AccountId == UserId.Empty)
-                created.AccountId = request.AuditFields!.StartedBy;
-            
+            created.AccountId = request.AuditFields!.StartedBy;
             created.CreatedBy = request.AuditFields!.StartedBy;
             created.CreatedAt = request.AuditFields!.StartedAt;
 

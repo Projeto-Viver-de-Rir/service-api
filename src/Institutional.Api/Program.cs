@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +27,11 @@ builder.Services.AddApplicationSetup();
 
 // Add identity stuff
 builder.Services
-    .AddIdentityApiEndpoints<ApplicationUser>()
+    .AddIdentityApiEndpoints<ApplicationUser>(opt =>
+    {
+        opt.User.RequireUniqueEmail = true;
+        opt.SignIn.RequireConfirmedAccount = true;
+    })
     .AddRoles<ApplicationRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -48,7 +51,7 @@ builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.ConfigureApplicationCookie(options => { options.Cookie.SameSite = SameSiteMode.None;});
 
 // Adding email provider
-//builder.Services.AddEmailSetup(builder.Configuration);
+builder.Services.AddEmailSetup(builder.Configuration);
 
 builder.Logging.ClearProviders();
 

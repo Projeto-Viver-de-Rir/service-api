@@ -1,6 +1,6 @@
-﻿using Institutional.Api.Email;
-using FluentEmail.Core.Interfaces;
+﻿using FluentEmail.Core.Interfaces;
 using FluentEmail.Smtp;
+using Institutional.Api.Email;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,16 +21,16 @@ public static class EmailSetup
         var password = emailSettings["Password"];
         
         services.AddFluentEmail(defaultFromEmail);
-
-        // TODO: Replace by sendgrid or mailgun [validate with marketing team]
+        
         SmtpClient smtp = new()
         {
-            Credentials = new NetworkCredential(username, password), 
+            Credentials = new NetworkCredential(username, password),
+            EnableSsl = true,
             Host = host, 
             Port = port
         };
         
-        services.AddSingleton<ISender>(x => new SmtpSender(new SmtpClient(host, port)));
+        services.AddSingleton<ISender>(x => new SmtpSender(smtp));
         services.AddTransient<IEmailService, EmailService>();
         services.AddTransient<IEmailSender, EmailSender>();
         
