@@ -2,8 +2,10 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Transfer;
-using Institutional.Infrastructure.AWS.Model;
+using Institutional.Application.Common;
+using Institutional.Application.Common.Responses;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using AWSCredentials = Institutional.Infrastructure.AWS.Model.AWSCredentials;
 
@@ -18,22 +20,21 @@ public class StorageService : IStorageService
         _credentials = new BasicAWSCredentials(credentials.AccessKey, credentials.SecretKey);
     }
 
-    public async Task<S3ResponseDto> UploadFileAsync(S3Object obj)
+    public async Task<OperationResult> UploadFileAsync(string BucketName, string FileName, MemoryStream InputStream)
     {
-        var config = new AmazonS3Config() 
+        var config = new AmazonS3Config
         {
-            RegionEndpoint = RegionEndpoint.EUWest2
+            RegionEndpoint = RegionEndpoint.SAEast1
         };
-
-        var response = new S3ResponseDto();
+        
         try
         {
             var uploadRequest = new TransferUtilityUploadRequest()
             {
-                InputStream = obj.InputStream,
-                Key = obj.Name,
-                BucketName = obj.BucketName,
-                CannedACL = S3CannedACL.NoACL
+                CannedACL = S3CannedACL.NoACL,
+                BucketName = BucketName,
+                InputStream = InputStream,
+                Key = FileName
             };
 
             using var client = new AmazonS3Client(_credentials, config);
@@ -41,20 +42,15 @@ public class StorageService : IStorageService
             
             await transferUtility.UploadAsync(uploadRequest);
 
-            response.StatusCode = 201;
-            response.Message = $"{obj.Name} has been uploaded successfully";
+            return new OperationResult{ StatusCode = 201, Message = $"{FileName} has been uploaded successfully." };
         }
         catch(AmazonS3Exception s3Ex)
         {
-            response.StatusCode = (int)s3Ex.StatusCode;
-            response.Message = s3Ex.Message;
+            return new OperationResult{ StatusCode = (int)s3Ex.StatusCode, Message = s3Ex.Message };
         }
         catch(Exception ex)
         {
-            response.StatusCode = 500;
-            response.Message = ex.Message;
+            return new OperationResult{ StatusCode = 500, Message = ex.Message };
         }
-
-        return response;
     }
 }

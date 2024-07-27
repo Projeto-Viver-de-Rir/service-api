@@ -1,3 +1,4 @@
+using Institutional.Application.Common;
 using Institutional.Infrastructure.AWS;
 using Institutional.Infrastructure.AWS.Model;
 using Microsoft.Extensions.Configuration;

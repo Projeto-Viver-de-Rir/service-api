@@ -4,7 +4,19 @@ using System.Collections.Generic;
 
 namespace Institutional.Application.Features.Accounts;
 
-public record GetMyselfResponse
+public record GetMyselfResponseV2
+{
+    public UserId Id { get; init; }
+    public string Email { get; init; }
+    public string? Phone { get; init; }
+
+    public VolunteerInformation Volunteer { get; set; }
+
+    public IEnumerable<string>? Permissions { get; set; } =
+        new[] { "volunteer" };
+}
+
+public record VolunteerInformation
 {
     public VolunteerId Id { get; init; }
     public string Name { get; init; } = null!;
@@ -19,16 +31,4 @@ public record GetMyselfResponse
     public string? Comments { get; init; }
     public string? Identifier { get; init; }
     public string? Photo { get; init; }
-    
-    public string? Email { get; init; }
-    public string? Phone { get; init; }
-    
-    public int LastMonthAttendances { get; init; }
-    public int ActualMonthAttendances { get; init; }
-    public int LastMonthAbsences { get; init; }
-    public int ActualMonthAbsences { get; init; }
-
-    // TODO: Check for permissions
-    public IEnumerable<string>? Permissions { get; init; } =
-        new[] { "volunteer", "fiscal", "advisory", "legal", "operational", "administrative" };
 }

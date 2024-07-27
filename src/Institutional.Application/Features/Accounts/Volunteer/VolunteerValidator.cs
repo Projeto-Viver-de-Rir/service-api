@@ -1,5 +1,5 @@
-﻿using Institutional.Application.Common;
-using FluentValidation;
+﻿using FluentValidation;
+using Institutional.Application.Common;
 
 namespace Institutional.Application.Features.Accounts.Volunteer;
 

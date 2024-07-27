@@ -1,18 +1,12 @@
 ﻿using Ardalis.Result;
 using Institutional.Application.Common;
-using Institutional.Domain.Entities.Common;
-using Institutional.Domain.Entities.Enums;
-using Mapster;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Institutional.Application.Features.Accounts.Account;
 
-public class AccountHandler : IRequestHandler<AccountRequest, Result<GetMyselfResponse>>
+public class AccountHandler : IRequestHandler<AccountRequest, Result<string>>
 {
     private readonly IContext _context;
     
@@ -22,7 +16,7 @@ public class AccountHandler : IRequestHandler<AccountRequest, Result<GetMyselfRe
         _context = context;
     }
 
-    public async Task<Result<GetMyselfResponse>> Handle(AccountRequest request, CancellationToken cancellationToken)
+    public async Task<Result<string>> Handle(AccountRequest request, CancellationToken cancellationToken)
     {
         // TODO: Update AspNetUsers
         
@@ -40,6 +34,6 @@ public class AccountHandler : IRequestHandler<AccountRequest, Result<GetMyselfRe
         // await _context.SaveChangesAsync(cancellationToken);
         // return originalAccount.Adapt<GetMyselfResponse>();
 
-        return new Result();
+        return "Changed successfully.";
     }
 }

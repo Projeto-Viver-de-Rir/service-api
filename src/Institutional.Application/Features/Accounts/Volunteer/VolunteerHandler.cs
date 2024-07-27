@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Institutional.Application.Features.Accounts.Volunteer;
 
-public class VolunteerHandler : IRequestHandler<VolunteerRequest, Result<GetMyselfResponse>>
+public class VolunteerHandler : IRequestHandler<VolunteerRequest, Result<VolunteerInformation>>
 {
     private readonly IContext _context;
     
@@ -18,7 +18,7 @@ public class VolunteerHandler : IRequestHandler<VolunteerRequest, Result<GetMyse
         _context = context;
     }
 
-    public async Task<Result<GetMyselfResponse>> Handle(VolunteerRequest request, CancellationToken cancellationToken)
+    public async Task<Result<VolunteerInformation>> Handle(VolunteerRequest request, CancellationToken cancellationToken)
     {
         var originalVolunteer = await _context.Volunteers
             .FirstOrDefaultAsync(x => x.AccountId == request.AuditFields!.StartedBy, cancellationToken);
@@ -41,6 +41,11 @@ public class VolunteerHandler : IRequestHandler<VolunteerRequest, Result<GetMyse
         
         _context.Volunteers.Update(originalVolunteer);
         await _context.SaveChangesAsync(cancellationToken);
-        return originalVolunteer.Adapt<GetMyselfResponse>();
+
+        // Photo upload could interfere if we rely only on received data to respond to this request.
+        var volunteer = await _context.Volunteers.FirstOrDefaultAsync(x => x.Id == originalVolunteer.Id,
+            cancellationToken: cancellationToken);
+
+        return volunteer.Adapt<VolunteerInformation>();
     }
 }

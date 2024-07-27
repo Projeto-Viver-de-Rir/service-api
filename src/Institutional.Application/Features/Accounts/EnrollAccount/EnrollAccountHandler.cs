@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Institutional.Application.Features.Accounts.EnrollAccount;
 
-public class EnrollAccountHandler : IRequestHandler<EnrollAccountRequest, Result<GetMyselfResponse>>
+public class EnrollAccountHandler : IRequestHandler<EnrollAccountRequest, Result<GetMyselfResponseV2>>
 {
     private readonly IContext _context;
     
@@ -20,7 +20,7 @@ public class EnrollAccountHandler : IRequestHandler<EnrollAccountRequest, Result
         _context = context;
     }
 
-    public async Task<Result<GetMyselfResponse>> Handle(EnrollAccountRequest request, CancellationToken cancellationToken)
+    public async Task<Result<GetMyselfResponseV2>> Handle(EnrollAccountRequest request, CancellationToken cancellationToken)
     {
         var allowNewVolunteers = await _context.Configs
             .FirstOrDefaultAsync(x => x.Type == ConfigType.RegistrationPeriodForNewVolunteers, cancellationToken);
@@ -41,9 +41,14 @@ public class EnrollAccountHandler : IRequestHandler<EnrollAccountRequest, Result
 
             _context.Volunteers.Add(created);
             await _context.SaveChangesAsync(cancellationToken);
-            return created.Adapt<GetMyselfResponse>();   
+
+            return new GetMyselfResponseV2()
+            {
+                Id = request.AuditFields!.StartedBy, 
+                Volunteer = created.Adapt<VolunteerInformation>()
+            };
         }
         
-        return Result.Error();
+        return Result.Error("We are no longer accepting new volunteers.");
     }
 }

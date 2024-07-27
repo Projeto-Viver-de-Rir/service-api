@@ -1,14 +1,12 @@
 ﻿using Ardalis.Result;
 using Institutional.Application.Common.Requests;
-using Institutional.Domain.Entities.Common;
-using Institutional.Domain.Entities.Enums;
 using MediatR;
 using System;
 using System.Text.Json.Serialization;
 
 namespace Institutional.Application.Features.Accounts.EnrollAccount;
 
-public record EnrollAccountRequest : IRequest<Result<GetMyselfResponse>>
+public record EnrollAccountRequest : IRequest<Result<GetMyselfResponseV2>>
 {
     public string Name { get; init; } = null!;
     public string? Nickname { get; init; }
@@ -19,10 +17,8 @@ public record EnrollAccountRequest : IRequest<Result<GetMyselfResponse>>
     public string? Country { get; init; }
     public DateTime? BirthDate { get; init; }
     public string? Availability { get; init; }
-    public string? Comments { get; init; }
     public string? Identifier { get; init; }
-    public UserId AccountId { get; init; }
-    public string? Photo { get; init; }
+    public string Photo { get; init; }
     
     [JsonIgnore]
     public AuditData? AuditFields { get; init; }

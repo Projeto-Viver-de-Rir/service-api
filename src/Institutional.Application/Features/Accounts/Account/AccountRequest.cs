@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Institutional.Application.Features.Accounts.Account;
 
-public record AccountRequest : IRequest<Result<GetMyselfResponse>>
+public record AccountRequest : IRequest<Result<string>>
 {
     public string Email { get; init; } = null!;
     public string Phone { get; init; } = null!;
