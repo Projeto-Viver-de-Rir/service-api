@@ -17,6 +17,6 @@ public class EmailSender : IEmailSender
             subject,
             htmlMessage);
 
-        await _emailService.Send(emailMessage);
+        await _emailService.SendEmailAsync(emailMessage);
     }
 }

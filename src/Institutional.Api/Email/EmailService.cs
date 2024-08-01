@@ -1,27 +1,33 @@
-﻿using FluentEmail.Core;
-using Microsoft.Extensions.Logging;
+using Institutional.Infrastructure.Email;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
+using MimeKit.Text;
 using System.Threading.Tasks;
 
 namespace Institutional.Api.Email;
 
 public class EmailService : IEmailService
 {
-    private readonly ILogger<EmailService> _logger;
-    private readonly IFluentEmailFactory _fluentEmailFactory;
-
-    public EmailService(ILogger<EmailService> logger, IFluentEmailFactory fluentEmailFactory)
+    private readonly EmailSettings _config;
+    
+    public EmailService(EmailSettings config)
     {
-        _logger = logger;
-        _fluentEmailFactory = fluentEmailFactory;
+        _config = config;
     }
-
-    public async Task Send(EmailMessageModel emailMessageModel)
+    
+    public async Task SendEmailAsync(EmailMessageModel emailMessage)
     {
-        _logger.LogInformation("Sending email");
-        
-        await _fluentEmailFactory.Create().To(emailMessageModel.ToAddress)
-            .Subject(emailMessageModel.Subject)
-            .Body(emailMessageModel.Body, true) // true means this is an HTML format message
-            .SendAsync();
+        var email = new MimeMessage(); 
+        email.From.Add(new MailboxAddress(_config.SenderName, _config.SenderEmail));
+        email.To.Add(MailboxAddress.Parse(emailMessage.ToAddress));
+        email.Subject = emailMessage.Subject;
+        email.Body = new TextPart(TextFormat.Html) {Text = emailMessage.Body};
+
+        using var smtp = new SmtpClient();
+        await smtp.ConnectAsync(_config.Host, _config.Port, SecureSocketOptions.StartTls);
+        await smtp.AuthenticateAsync(_config.Username, _config.Password);
+        await smtp.SendAsync(email);
+        await smtp.DisconnectAsync(true);
     }
 }
