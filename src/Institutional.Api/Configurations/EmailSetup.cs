@@ -1,9 +1,12 @@
 ﻿using FluentEmail.Core.Interfaces;
+using FluentEmail.MailKitSmtp;
 using FluentEmail.Smtp;
 using Institutional.Api.Email;
+using MailKit.Security;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Net;
 using System.Net.Mail;
 
@@ -15,22 +18,20 @@ public static class EmailSetup
     {
         var emailSettings = configuration.GetSection("EmailSettings");
         var defaultFromEmail = emailSettings["DefaultFromEmail"];
-        var host = emailSettings["Host"];
-        var port = emailSettings.GetValue<int>("Port");
-        var username = emailSettings["Username"];
-        var password = emailSettings["Password"];
-        
-        services.AddFluentEmail(defaultFromEmail);
-        
-        SmtpClient smtp = new()
+
+        var smtp = new SmtpClientOptions
         {
-            Credentials = new NetworkCredential(username, password),
-            EnableSsl = true,
-            Host = host, 
-            Port = port
+            Server = emailSettings["Host"],
+            Port = emailSettings.GetValue<int>("Port"),
+            User = emailSettings["Username"],
+            Password = emailSettings["Password"],
+            UseSsl = true,
+            RequiresAuthentication = true,
+            SocketOptions = SecureSocketOptions.Auto
         };
-        
-        services.AddSingleton<ISender>(x => new SmtpSender(smtp));
+
+        services.AddFluentEmail(defaultFromEmail);
+        services.TryAdd(ServiceDescriptor.Singleton<ISender>(_ => new MailKitSender(smtp)));
         services.AddTransient<IEmailService, EmailService>();
         services.AddTransient<IEmailSender, EmailSender>();
         

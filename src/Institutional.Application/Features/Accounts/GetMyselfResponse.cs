@@ -27,8 +27,7 @@ public record GetMyselfResponse
     public int ActualMonthAttendances { get; init; }
     public int LastMonthAbsences { get; init; }
     public int ActualMonthAbsences { get; init; }
-
-    // TODO: Check for permissions
+    
     public IEnumerable<string>? Permissions { get; init; } =
         new[] { "volunteer", "fiscal", "advisory", "legal", "operational", "administrative" };
 }

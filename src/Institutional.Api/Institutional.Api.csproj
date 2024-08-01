@@ -25,6 +25,7 @@
     <PackageReference Include="Ardalis.Result.AspNetCore" />
     <PackageReference Include="Ben.Demystifier" />
     <PackageReference Include="FluentEmail.Core" />
+    <PackageReference Include="FluentEmail.MailKit" />
     <PackageReference Include="FluentEmail.Smtp" />
     <PackageReference Include="FluentValidation.AspNetCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
