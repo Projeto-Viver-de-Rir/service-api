@@ -1,10 +1,10 @@
+using Institutional.Api.Boilerplate;
 using Institutional.Api.Common;
 using Institutional.Api.Configurations;
 using Institutional.Api.Endpoints;
 using Institutional.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -122,6 +122,6 @@ app.MapOperationEndpoints();
 app.MapReportEndpoints();
 app.MapGroup("api/identity")
     .WithTags("Identity")
-    .MapIdentityApi<ApplicationUser>();
+    .MapCustomIdentityApi<ApplicationUser>();
 
 await app.RunAsync();
