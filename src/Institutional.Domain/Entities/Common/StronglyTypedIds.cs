@@ -106,3 +106,21 @@ public partial struct ScheduleEventCoordinatorId : IGuid
         return new ScheduleEventCoordinatorId(guid);
     }
 }
+
+[StronglyTypedId]
+public partial struct ReportDebtId : IGuid
+{
+    public static implicit operator ReportDebtId(Guid guid)
+    {
+        return new ReportDebtId(guid);
+    }
+}
+
+[StronglyTypedId]
+public partial struct ReportPresenceId : IGuid
+{
+    public static implicit operator ReportPresenceId(Guid guid)
+    {
+        return new ReportPresenceId(guid);
+    }
+}

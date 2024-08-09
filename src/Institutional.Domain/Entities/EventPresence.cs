@@ -18,4 +18,5 @@ public class EventPresence : Entity<EventPresenceId>
     public DateTime? UpdatedAt { get; set; }
 
     public virtual Volunteer Volunteer { get; set; }
+    public virtual Event Event { get; set; }
 }
