@@ -28,7 +28,7 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
         var scheduleEvents = _context.ScheduleEvents.Select(p => p).ToImmutableList();
 
         var daysInMonth = DateTime.DaysInMonth(request.MonthToGenerate.Year, request.MonthToGenerate.Month);
-        var firstDayOfMonth = new DateTime(request.MonthToGenerate.Year, request.MonthToGenerate.Month, 1);
+        var firstDayOfMonth = new DateTime(request.MonthToGenerate.Year, request.MonthToGenerate.Month, 1, 0, 0, 0, kind: DateTimeKind.Utc);
         
         var days = 
             Enumerable.Range(0, daysInMonth).
@@ -90,7 +90,9 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
                     item.DayToOccur.Month, 
                     item.DayToOccur.Day, 
                     item.Schedule.Hour, 
-                    item.Schedule.Minute, 0),
+                    item.Schedule.Minute, 
+                    0,
+                    kind: DateTimeKind.Utc),
                 Occupancy = item.Occupancy,
                 Status = EventStatus.Scheduled,
                 CreatedAt = request.AuditFields!.StartedAt,
@@ -124,7 +126,8 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
                     item.DayToOccur.Day, 
                     item.Schedule.Hour, 
                     item.Schedule.Minute, 
-                    0),
+                    0,
+                    kind: DateTimeKind.Utc),
                 Occupancy = item.Occupancy,
                 Status = EventStatus.Scheduled,
                 CreatedAt = request.AuditFields!.StartedAt,
@@ -133,8 +136,9 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
 
         var events = eventsWeeklyOrSpecific.Union(eventsLastOccurence);
         
-        _context.Events.AddRange(events);
+        await _context.Events.AddRangeAsync(events, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+        
         return new GetOperationsResponse()
         {
             BaseItems = scheduleEvents.Count(), 

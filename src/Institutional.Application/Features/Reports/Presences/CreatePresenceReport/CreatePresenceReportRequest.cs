@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Institutional.Application.Features.Reports.Presences.CreatePresenceReport;
 
-public record CreatePresenceReportRequest : IRequest<Result<string>>
+public record CreatePresenceReportRequest : IRequest<Result<CreateReportsResponse>>
 {
     [JsonIgnore]
     public AuditData? AuditFields { get; init; }

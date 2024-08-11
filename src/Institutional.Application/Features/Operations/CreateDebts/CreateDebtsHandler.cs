@@ -39,9 +39,9 @@ public class CreateDebtsHandler : IRequestHandler<CreateDebtsRequest, Result<Get
             debtsToGenerate.Add(new()
                 {
                     Name = string.Concat(expectedMonth.ToString("MM"), "/", expectedMonth.Year),
-                    Description = "Monthly contribution",
+                    Description = "Monthly fee",
                     Amount = amount,
-                    DueDate = new DateTime(expectedMonth.Year, expectedMonth.Month, 15),
+                    DueDate = new DateTime(expectedMonth.Year, expectedMonth.Month, 10, 0, 0, 0, kind: DateTimeKind.Utc),
                     CreatedAt = request.AuditFields!.StartedAt,
                     CreatedBy = request.AuditFields!.StartedBy
                 });
@@ -59,8 +59,9 @@ public class CreateDebtsHandler : IRequestHandler<CreateDebtsRequest, Result<Get
             CreatedBy = debt.CreatedBy
         });
 
-        _context.Debts.AddRange(debts);
+        await _context.Debts.AddRangeAsync(debts, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+        
         return new GetOperationsResponse()
         {
             BaseItems = debtsToGenerate.Count(), 

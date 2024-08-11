@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Institutional.Application.Features.Reports.Presences.CreatePresenceReport;
 
-public class CreatePresenceReportHandler : IRequestHandler<CreatePresenceReportRequest, Result<string>>
+public class CreatePresenceReportHandler : IRequestHandler<CreatePresenceReportRequest, Result<CreateReportsResponse>>
 {
     private readonly IContext _context;
     
@@ -22,12 +22,12 @@ public class CreatePresenceReportHandler : IRequestHandler<CreatePresenceReportR
         _context = context;
     }
 
-    public async Task<Result<string>> Handle(CreatePresenceReportRequest request, CancellationToken cancellationToken)
+    public async Task<Result<CreateReportsResponse>> Handle(CreatePresenceReportRequest request, CancellationToken cancellationToken)
     {
         if (request.AuditFields!.StartedAt.Day > 10)
-            return "Este relatório só pode ser gerado até o dia 10 de cada mês.";
+            return Result.Error("Este relatório só pode ser gerado até o dia 10 de cada mês.");
 
-        var dayLimit = new DateTime(request.AuditFields!.StartedAt.Year, request.AuditFields!.StartedAt.Month, 1);
+        var dayLimit = new DateTime(request.AuditFields!.StartedAt.Year, request.AuditFields!.StartedAt.Month, 1, 0, 0, 0, kind: DateTimeKind.Utc);
         var firstDayPreviousMonth = dayLimit.AddMonths(-2);
         var firstDayLastMonth = dayLimit.AddMonths(-1);
         
@@ -49,6 +49,9 @@ public class CreatePresenceReportHandler : IRequestHandler<CreatePresenceReportR
         await _context.ReportPresences.AddRangeAsync(presences, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return "Relatório gerado com sucesso.";
+        return new CreateReportsResponse()
+        {
+            GeneratedItems = presences.Count()
+        };
     }
 }

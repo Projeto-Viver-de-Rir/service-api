@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Institutional.Application.Features.Reports.Debts.CreateDebtReport;
 
-public record CreateDebtReportRequest : IRequest<Result<string>>
+public record CreateDebtReportRequest : IRequest<Result<CreateReportsResponse>>
 {
     [JsonIgnore]
     public AuditData? AuditFields { get; init; }

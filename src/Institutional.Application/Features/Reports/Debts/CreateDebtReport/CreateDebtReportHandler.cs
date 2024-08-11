@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Institutional.Application.Features.Reports.Debts.CreateDebtReport;
 
-public class CreateDebtReportHandler : IRequestHandler<CreateDebtReportRequest, Result<string>>
+public class CreateDebtReportHandler : IRequestHandler<CreateDebtReportRequest, Result<CreateReportsResponse>>
 {
     private readonly IContext _context;
     
@@ -18,10 +18,10 @@ public class CreateDebtReportHandler : IRequestHandler<CreateDebtReportRequest, 
         _context = context;
     }
 
-    public async Task<Result<string>> Handle(CreateDebtReportRequest request, CancellationToken cancellationToken)
+    public async Task<Result<CreateReportsResponse>> Handle(CreateDebtReportRequest request, CancellationToken cancellationToken)
     {
         if (request.AuditFields!.StartedAt.Day < 15)
-            return "Este relatório só pode ser gerado a partir do dia 15 de cada mês.";
+            return Result.Error("Este relatório só pode ser gerado a partir do dia 15 de cada mês.");
         
         _context.ReportDebts.RemoveRange(_context.ReportDebts);
         
@@ -40,6 +40,9 @@ public class CreateDebtReportHandler : IRequestHandler<CreateDebtReportRequest, 
         await _context.ReportDebts.AddRangeAsync(debts, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
-        return "Relatório gerado com sucesso.";
+        return new CreateReportsResponse()
+        {
+            GeneratedItems = debts.Count()
+        };
     }
 }
