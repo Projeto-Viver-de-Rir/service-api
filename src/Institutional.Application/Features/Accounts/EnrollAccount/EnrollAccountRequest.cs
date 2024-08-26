@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace Institutional.Application.Features.Accounts.EnrollAccount;
 
-public record EnrollAccountRequest : IRequest<Result<GetMyselfResponseV2>>
+public record EnrollAccountRequest : IRequest<Result<VolunteerInformation>>
 {
     public string Name { get; init; } = null!;
     public string? Nickname { get; init; }

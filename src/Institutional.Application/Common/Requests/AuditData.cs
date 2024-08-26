@@ -5,6 +5,12 @@ namespace Institutional.Application.Common.Requests;
 
 public record AuditData
 {
+    public AuditData(Guid loggedUserId)
+    {
+        StartedBy = loggedUserId;
+        StartedAt = DateTime.UtcNow;
+    }
+    
     public AuditData(string loggedUserId)
     {
         StartedBy = Guid.Parse(loggedUserId);
