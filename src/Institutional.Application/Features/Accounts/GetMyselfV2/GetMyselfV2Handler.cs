@@ -20,7 +20,7 @@ public class GetMyselfV2Handler : IRequestHandler<GetMyselfV2Request, Result<Get
     }
     public async Task<Result<GetMyselfResponseV2>> Handle(GetMyselfV2Request request, CancellationToken cancellationToken)
     {
-        var result = new GetMyselfResponseV2 { Id = request.Id };
+        var result = new GetMyselfResponseV2 { Id = request.Id, Email = request.Email, Phone = request.Phone};
         
         var volunteer = await _context.Volunteers.FirstOrDefaultAsync(x => x.AccountId == request.Id,
             cancellationToken: cancellationToken);
