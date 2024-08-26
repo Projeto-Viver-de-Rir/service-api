@@ -1,5 +1,7 @@
-﻿using Ardalis.Result.AspNetCore;
+﻿using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 using Institutional.Application.Common.Requests;
+using Institutional.Application.Features.Accounts;
 using Institutional.Application.Features.Accounts.Account;
 using Institutional.Application.Features.Accounts.EnrollAccount;
 using Institutional.Application.Features.Accounts.GetMyself;
@@ -36,20 +38,24 @@ public static class AccountEndpoints
             return result.ToMinimalApiResult();
         });
         
-        group.MapGet("/v2/myself", async (IMediator mediator, IHttpContextAccessor httpContextAccessor) =>
+        group.MapGet("/v2/myself", async (IMediator mediator, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager) =>
         {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            var result = await mediator.Send(new GetMyselfV2Request(Guid.Parse(loggedUserId)));
+            var loggedUserId =
+                Guid.Parse(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            
+            var user = await userManager.Users.SingleOrDefaultAsync(p => p.Id == loggedUserId);
+            var result = await mediator.Send(new GetMyselfV2Request() with { Id  = loggedUserId, Email = user.Email, Phone = user.PhoneNumber});
+            
             return result.ToMinimalApiResult();
         });
         
         group.MapPatch("/account", async (IMediator mediator, AccountRequest request, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager) =>
         {
-            var audit =
-                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var loggedUserId =
+                Guid.Parse(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
-            var user = await userManager.Users.SingleOrDefaultAsync(p => p.Id == audit.StartedBy);
+            var audit = new AuditData(loggedUserId);
+            var user = await userManager.Users.SingleOrDefaultAsync(p => p.Id == loggedUserId);
             
             // Change PhoneNumber without verify token (for now) 
             var phoneToken = await userManager.GenerateChangePhoneNumberTokenAsync(user, request.Phone);
@@ -65,9 +71,8 @@ public static class AccountEndpoints
         
         group.MapPost("/enroll", async (IMediator mediator, EnrollAccountRequest request, IHttpContextAccessor httpContextAccessor) =>
         {
-            var audit =
-                new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
+            var audit = new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            
             var result = await mediator.Send(request with { AuditFields = audit });
             return result.ToMinimalApiResult();
         });
