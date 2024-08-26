@@ -72,7 +72,7 @@ public static class IdentityApiEndpointRouteBuilderExtensions
             var emailStore = (IUserEmailStore<TUser>)userStore;
             var phoneStore = (IUserPhoneNumberStore<TUser>)userStore;
             var email = registration.Email;
-            var phone = registration.PhoneNumber;
+            var phone = registration.Phone;
 
             if (string.IsNullOrEmpty(email) || !_emailAddressAttribute.IsValid(email))
             {

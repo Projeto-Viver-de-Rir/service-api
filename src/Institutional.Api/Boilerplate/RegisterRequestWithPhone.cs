@@ -5,7 +5,7 @@ public class RegisterRequestWithPhone
     /// <summary>
     /// The user's PhoneNumber.
     /// </summary>
-    public required string PhoneNumber { get; init; }
+    public required string Phone { get; init; }
     
     /// <summary>
     /// The user's email address which acts as a user name.
