@@ -59,7 +59,7 @@ public static class IdentityApiEndpointRouteBuilderExtensions
         // NOTE: We cannot inject UserManager<TUser> directly because the TUser generic parameter is currently unsupported by RDG.
         // https://github.com/dotnet/aspnetcore/issues/47338
         routeGroup.MapPost("/register", async Task<Results<Ok, ValidationProblem>>
-            ([FromBody] RegisterRequest registration, HttpContext context, [FromServices] IServiceProvider sp) =>
+            ([FromBody] RegisterRequestWithPhone registration, HttpContext context, [FromServices] IServiceProvider sp) =>
         {
             var userManager = sp.GetRequiredService<UserManager<TUser>>();
 
@@ -70,7 +70,9 @@ public static class IdentityApiEndpointRouteBuilderExtensions
 
             var userStore = sp.GetRequiredService<IUserStore<TUser>>();
             var emailStore = (IUserEmailStore<TUser>)userStore;
+            var phoneStore = (IUserPhoneNumberStore<TUser>)userStore;
             var email = registration.Email;
+            var phone = registration.PhoneNumber;
 
             if (string.IsNullOrEmpty(email) || !_emailAddressAttribute.IsValid(email))
             {
@@ -80,6 +82,8 @@ public static class IdentityApiEndpointRouteBuilderExtensions
             var user = new TUser();
             await userStore.SetUserNameAsync(user, email, CancellationToken.None);
             await emailStore.SetEmailAsync(user, email, CancellationToken.None);
+            await phoneStore.SetPhoneNumberAsync(user, phone, CancellationToken.None);
+            
             var result = await userManager.CreateAsync(user, registration.Password);
 
             if (!result.Succeeded)
