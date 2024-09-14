@@ -21,12 +21,16 @@ public class GetEventByIdHandler : IRequestHandler<GetEventByIdRequest, Result<G
     {
         var eventItem = await _context.Events
             .Include(p => p.Coordinators)
+            .Include(p => p.Presences)
             .FirstOrDefaultAsync(x => x.Id == request.Id,
             cancellationToken: cancellationToken);
         
         if (eventItem is null) 
             return Result.NotFound();
+
+        var result = eventItem.Adapt<GetEventResponse>();
+        result.Capacity = eventItem.Occupancy - eventItem.Presences.Count;
         
-        return eventItem.Adapt<GetEventResponse>();
+        return result;
     }
 }

@@ -14,4 +14,6 @@ public class EventCoordinator : Entity<EventCoordinatorId>
     public DateTime CreatedAt { get; set; }
     
     public virtual Volunteer Volunteer { get; set; }
+    
+    public virtual Event Event { get; set; }
 }
