@@ -21,7 +21,9 @@ public class GetEventByIdHandler : IRequestHandler<GetEventByIdRequest, Result<G
     {
         var eventItem = await _context.Events
             .Include(p => p.Coordinators)
+                .ThenInclude(c => c.Volunteer)
             .Include(p => p.Presences)
+                .ThenInclude(c => c.Volunteer)
             .FirstOrDefaultAsync(x => x.Id == request.Id,
             cancellationToken: cancellationToken);
         
