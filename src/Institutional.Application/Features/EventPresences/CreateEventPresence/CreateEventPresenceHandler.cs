@@ -30,6 +30,12 @@ public class CreateEventPresenceHandler : IRequestHandler<CreateEventPresenceReq
         if (originalEvent == null) 
             return Result.NotFound();
         
+        var alreadyParticipating = _context.EventPresences
+            .Any(x => x.EventId == request.EventId && x.VolunteerId == request.VolunteerId);
+        
+        if (alreadyParticipating)
+            return Result.Error();
+        
         var actualPresences = _context.EventPresences
             .Count(x => x.EventId == request.EventId);
 

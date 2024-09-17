@@ -21,11 +21,17 @@ public class GetAllEventsHandler : IRequestHandler<GetAllEventsRequest, Paginate
     public async Task<PaginatedList<GetEventResponse>> Handle(GetAllEventsRequest request, CancellationToken cancellationToken)
     {
         var events = _context.Events
-            .Include(p => p.Coordinators)
+            .Include(p => p.Presences)
             .WhereIf(!string.IsNullOrEmpty(request.Name), x => EF.Functions.Like(x.Name, $"%{request.Name}%"))
             .WhereIf(request.Status != null, x => x.Status == request.Status);
-        return await events.ProjectToType<GetEventResponse>()
+        
+        var paginatedListAsync = await events.ProjectToType<GetEventResponse>()
             .OrderBy(x => x.Name)
             .ToPaginatedListAsync(request.CurrentPage, request.PageSize);
+        
+        foreach (var eventResponse in paginatedListAsync.Result)
+            eventResponse.Capacity = eventResponse.Occupancy - eventResponse.Presences.Count();
+
+        return paginatedListAsync;
     }
 }
