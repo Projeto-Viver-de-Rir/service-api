@@ -1,9 +1,12 @@
 ﻿using Ardalis.Result;
 using Institutional.Application.Common;
+using Institutional.Domain.Entities;
 using Institutional.Domain.Entities.Enums;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,25 +27,34 @@ public class ConclusionEventHandler : IRequestHandler<ConclusionEventRequest, Re
         var originalEvent = await _context.Events
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
         
-        if (originalEvent == null) 
+        if (originalEvent == null || originalEvent.Status != EventStatus.Scheduled) 
             return Result.NotFound();
 
-        foreach (var volunteerId in request.Presences)
+        if (request.Presences.Any())
         {
-            var originalPresence = await _context.EventPresences
-                .FirstOrDefaultAsync(x => x.EventId == request.Id || x.VolunteerId == volunteerId, cancellationToken);
-
-            if (originalPresence != null)
+            foreach (var volunteerId in request.Presences)
             {
-                originalPresence.Attended = true;
-                originalPresence.UpdatedAt = request.AuditFields!.StartedAt;
-                originalPresence.UpdatedBy = request.AuditFields!.StartedBy;
-            }
-        }
+                var originalPresence = await _context.EventPresences
+                    .FirstOrDefaultAsync(x => x.EventId == request.Id || x.VolunteerId == volunteerId, cancellationToken);
 
-        originalEvent.Status = EventStatus.Realized;
+                if (originalPresence != null)
+                {
+                    originalPresence.Attended = true;
+                    originalPresence.UpdatedAt = request.AuditFields!.StartedAt;
+                    originalPresence.UpdatedBy = request.AuditFields!.StartedBy;
+                }
+            }
+
+            originalEvent.Status = EventStatus.Realized;            
+        }
+        else
+            originalEvent.Status = EventStatus.Canceled;
         
         await _context.SaveChangesAsync(cancellationToken);
+
+        originalEvent.Presences = new List<EventPresence>();
+        originalEvent.Coordinators = new List<EventCoordinator>();
+
         return originalEvent.Adapt<GetEventResponse>();
     }
 }

@@ -10,8 +10,5 @@ public class ConclusionEventValidator : AbstractValidator<ConclusionEventRequest
 
         RuleFor(x => x.Id)
             .NotEmpty();
-        
-        RuleFor(x => x.Presences)
-            .NotEmpty();
     }
 }

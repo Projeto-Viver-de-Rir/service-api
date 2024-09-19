@@ -9,7 +9,7 @@ namespace Institutional.Application.Features.Events;
 public record GetEventResponse
 {
     public EventId Id { get; init; }
-    public string Name { get; init; } = null!;
+    public string Name { get; init; }
     public string? Description { get; init; }
     public string? Address { get; init; }
     public string? City { get; init; }
