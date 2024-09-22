@@ -3,6 +3,7 @@ using Institutional.Application.Common;
 using Institutional.Domain.Entities;
 using Mapster;
 using MediatR;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,9 +45,9 @@ public class CreateEventHandler : IRequestHandler<CreateEventRequest, Result<Get
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        var response = created.Adapt<GetEventResponse>();
-        //response.Coordinators = request.Coordinators;
+        created.Presences = new List<EventPresence>();
+        created.Coordinators = new List<EventCoordinator>();
         
-        return response;
+        return created.Adapt<GetEventResponse>();
     }
 }

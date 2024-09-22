@@ -4,6 +4,7 @@ using Institutional.Domain.Entities;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -76,9 +77,9 @@ public class UpdateEventHandler : IRequestHandler<UpdateEventRequest, Result<Get
         
         await _context.SaveChangesAsync(cancellationToken);
         
-        var response = originalEvent.Adapt<GetEventResponse>();
-        //response.Coordinators = request.Coordinators;
+        originalEvent.Presences = new List<EventPresence>();
+        originalEvent.Coordinators = new List<EventCoordinator>();
         
-        return response;
+        return originalEvent.Adapt<GetEventResponse>();
     }
 }
