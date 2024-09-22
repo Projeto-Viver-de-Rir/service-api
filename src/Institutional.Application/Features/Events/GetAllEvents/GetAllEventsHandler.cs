@@ -26,7 +26,7 @@ public class GetAllEventsHandler : IRequestHandler<GetAllEventsRequest, Paginate
             .WhereIf(request.Status != null, x => x.Status == request.Status);
         
         var paginatedListAsync = await events.ProjectToType<GetEventResponse>()
-            .OrderBy(x => x.Name)
+            .OrderBy(x => x.HappenAt)
             .ToPaginatedListAsync(request.CurrentPage, request.PageSize);
         
         foreach (var eventResponse in paginatedListAsync.Result)
