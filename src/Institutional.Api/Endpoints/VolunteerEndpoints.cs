@@ -7,11 +7,15 @@ using Institutional.Application.Features.Volunteers.GetVolunteerById;
 using Institutional.Application.Features.Volunteers.UpdateVolunteer;
 using Institutional.Domain.Entities.Common;
 using Institutional.Domain.Entities.Enums;
+using Institutional.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Security.Claims;
 
 namespace Institutional.Api.Endpoints;
@@ -24,15 +28,32 @@ public static class VolunteerEndpoints
             .WithTags("volunteer")
             .RequireAuthorization();
         
-        group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllVolunteersRequest request) =>
+        group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllVolunteersRequest request, UserManager<ApplicationUser> userManager) =>
         {
             var result = await mediator.Send(request);
+
+            foreach (var item in result.Result)
+            {
+                var id = Guid.Parse(item.AccountId.ToString());
+                
+                var user = await userManager.Users.SingleOrDefaultAsync(p => p.Id == id);
+                item.Email = user?.Email;
+                item.Phone = user?.PhoneNumber;
+            }
+            
             return result;
         });
 
-        group.MapGet("{id}", async (IMediator mediator, VolunteerId id) =>
+        group.MapGet("{id}", async (IMediator mediator, VolunteerId id, UserManager<ApplicationUser> userManager) =>
         {
             var result = await mediator.Send(new GetVolunteerByIdRequest(id));
+
+            var userId = Guid.Parse(result.Value.AccountId.ToString());
+                
+            var user = await userManager.Users.SingleOrDefaultAsync(p => p.Id == userId);
+            result.Value.Email = user?.Email;
+            result.Value.Phone = user?.PhoneNumber;
+            
             return result.ToMinimalApiResult();
         });
         

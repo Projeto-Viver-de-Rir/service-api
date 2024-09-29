@@ -22,7 +22,7 @@ public class GetAllEventsHandler : IRequestHandler<GetAllEventsRequest, Paginate
     {
         var events = _context.Events
             .Include(p => p.Presences)
-            .WhereIf(!string.IsNullOrEmpty(request.Name), x => EF.Functions.Like(x.Name, $"%{request.Name}%"))
+            .WhereIf(!string.IsNullOrEmpty(request.Name), x => EF.Functions.Like(x.Name.ToLower(), $"%{request.Name!.ToLower()}%"))
             .WhereIf(request.Status != null, x => x.Status == request.Status);
         
         var paginatedListAsync = await events.ProjectToType<GetEventResponse>()

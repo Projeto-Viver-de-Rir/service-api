@@ -34,7 +34,7 @@ public class UpdateVolunteerHandler : IRequestHandler<UpdateVolunteerRequest, Re
         originalVolunteer.Zip = request.Zip;
         originalVolunteer.Country = request.Country;
         originalVolunteer.BirthDate = request.BirthDate;
-        originalVolunteer.Availability = request.Availability;
+        originalVolunteer.Availability = request.Availability?.Replace(";", ",");
         originalVolunteer.Comments = request.Comments;
         originalVolunteer.Identifier = request.Identifier;
         originalVolunteer.Photo = request.Photo;

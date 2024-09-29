@@ -21,8 +21,8 @@ public record GetVolunteerResponse
     public UserId AccountId { get; init; }
     public string? Photo { get; init; }
     
-    public string? Email { get; init; }
-    public string? Phone { get; init; }
+    public string? Email { get; set; }
+    public string? Phone { get; set; }
     
     public int LastMonthAttendances { get; init; }
     public int ActualMonthAttendances { get; init; }

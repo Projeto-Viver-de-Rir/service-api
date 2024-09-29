@@ -29,7 +29,12 @@ public class CreateEventPresenceHandler : IRequestHandler<CreateEventPresenceReq
         
         if (originalEvent == null) 
             return Result.NotFound();
-        
+
+        var volunteerDebts = _context.Debts.Count(x => x.VolunteerId == request.VolunteerId && !x.PaidAt.HasValue);
+
+        if (volunteerDebts > 3)
+            return Result.Error();
+
         var alreadyParticipating = _context.EventPresences
             .Any(x => x.EventId == request.EventId && x.VolunteerId == request.VolunteerId);
         
