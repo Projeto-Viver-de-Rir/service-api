@@ -7,4 +7,6 @@ namespace Institutional.Application.Common;
 public interface IStorageService
 {
     Task<OperationResult> UploadFileAsync(string BucketName, string FileName, MemoryStream InputStream);
+
+    Task<string?> GetFilePathAsync(string FileName, string BucketName = "institutional-app");
 }

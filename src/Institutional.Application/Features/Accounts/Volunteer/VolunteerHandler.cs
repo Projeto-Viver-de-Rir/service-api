@@ -11,11 +11,12 @@ namespace Institutional.Application.Features.Accounts.Volunteer;
 public class VolunteerHandler : IRequestHandler<VolunteerRequest, Result<VolunteerInformation>>
 {
     private readonly IContext _context;
+    private readonly IStorageService _storageService;
     
-    
-    public VolunteerHandler(IContext context)
+    public VolunteerHandler(IContext context, IStorageService storageService)
     {
         _context = context;
+        _storageService = storageService;
     }
 
     public async Task<Result<VolunteerInformation>> Handle(VolunteerRequest request, CancellationToken cancellationToken)
@@ -46,6 +47,11 @@ public class VolunteerHandler : IRequestHandler<VolunteerRequest, Result<Volunte
         var volunteer = await _context.Volunteers.FirstOrDefaultAsync(x => x.Id == originalVolunteer.Id,
             cancellationToken: cancellationToken);
 
+        var volunteerInformation = volunteer.Adapt<VolunteerInformation>();
+        
+        if (!string.IsNullOrWhiteSpace(volunteerInformation.Photo))
+            volunteerInformation.Photo = await _storageService.GetFilePathAsync(volunteerInformation.Photo);
+        
         return volunteer.Adapt<VolunteerInformation>();
     }
 }

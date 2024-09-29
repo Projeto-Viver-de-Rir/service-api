@@ -12,11 +12,12 @@ namespace Institutional.Application.Features.Accounts.GetMyselfV2;
 public class GetMyselfV2Handler : IRequestHandler<GetMyselfV2Request, Result<GetMyselfResponseV2>>
 {
     private readonly IContext _context;
+    private readonly IStorageService _storageService;
 
-
-    public GetMyselfV2Handler(IContext context)
+    public GetMyselfV2Handler(IContext context, IStorageService storageService)
     {
         _context = context;
+        _storageService = storageService;
     }
     public async Task<Result<GetMyselfResponseV2>> Handle(GetMyselfV2Request request, CancellationToken cancellationToken)
     {
@@ -28,6 +29,9 @@ public class GetMyselfV2Handler : IRequestHandler<GetMyselfV2Request, Result<Get
         if (volunteer is not null)
         {
             result.Volunteer = volunteer.Adapt<VolunteerInformation>();
+            
+            if (!string.IsNullOrWhiteSpace(result.Volunteer.Photo))
+                result.Volunteer.Photo = await _storageService.GetFilePathAsync(result.Volunteer.Photo);
 
             var teamIds = _context.TeamMembers
                 .Where(p => p.VolunteerId == volunteer.Id)

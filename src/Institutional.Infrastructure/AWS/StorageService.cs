@@ -1,6 +1,7 @@
 using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Institutional.Application.Common;
 using Institutional.Application.Common.Responses;
@@ -51,6 +52,29 @@ public class StorageService : IStorageService
         catch(Exception ex)
         {
             return new OperationResult{ StatusCode = 500, Message = ex.Message };
+        }
+    }
+    
+    public async Task<string?> GetFilePathAsync(string FileName, string BucketName = "institutional-app")
+    {
+        var config = new AmazonS3Config
+        {
+            RegionEndpoint = RegionEndpoint.SAEast1
+        };
+        
+        try
+        {
+            var preSignedRequest = new GetPreSignedUrlRequest()
+            {
+                BucketName = BucketName, Key = FileName, Expires = DateTime.UtcNow.AddDays(30)
+            };
+
+            using var client = new AmazonS3Client(_credentials, config);
+            return await client.GetPreSignedURLAsync(preSignedRequest);
+        }
+        catch(Exception)
+        {
+            return null;
         }
     }
 }

@@ -30,5 +30,5 @@ public record VolunteerInformation
     public string? Availability { get; init; }
     public string? Comments { get; init; }
     public string? Identifier { get; init; }
-    public string? Photo { get; init; }
+    public string? Photo { get; set; }
 }
