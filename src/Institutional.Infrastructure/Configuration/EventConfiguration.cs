@@ -14,6 +14,9 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.Property(x => x.Id)
             .HasConversion<EventId.EfCoreValueConverter>();
         
+        builder.Property(x => x.ScheduleEventId)
+            .HasConversion<ScheduleEventId.EfCoreValueConverter>();
+        
         builder.Property(x => x.CreatedBy)
             .HasConversion<UserId.EfCoreValueConverter>();
         

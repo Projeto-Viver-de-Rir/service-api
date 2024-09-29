@@ -127,6 +127,9 @@ namespace Institutional.Infrastructure.Migrations
                     b.Property<int>("Occupancy")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("ScheduleEventId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -666,7 +669,7 @@ namespace Institutional.Infrastructure.Migrations
 
             modelBuilder.Entity("Institutional.Domain.Entities.EventCoordinator", b =>
                 {
-                    b.HasOne("Institutional.Domain.Entities.Event", null)
+                    b.HasOne("Institutional.Domain.Entities.Event", "Event")
                         .WithMany("Coordinators")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -678,12 +681,14 @@ namespace Institutional.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Event");
+
                     b.Navigation("Volunteer");
                 });
 
             modelBuilder.Entity("Institutional.Domain.Entities.EventPresence", b =>
                 {
-                    b.HasOne("Institutional.Domain.Entities.Event", null)
+                    b.HasOne("Institutional.Domain.Entities.Event", "Event")
                         .WithMany("Presences")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -694,6 +699,8 @@ namespace Institutional.Infrastructure.Migrations
                         .HasForeignKey("VolunteerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Event");
 
                     b.Navigation("Volunteer");
                 });

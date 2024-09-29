@@ -17,6 +17,7 @@ public class Event : Entity<EventId>
     public DateTime? HappenAt { get; set; }
     public int Occupancy { get; set; }
     public EventStatus Status { get; set; }
+    public ScheduleEventId ScheduleEventId { get; set; }
     
     public UserId CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }

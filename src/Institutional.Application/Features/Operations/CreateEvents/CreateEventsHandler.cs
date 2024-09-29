@@ -2,10 +2,8 @@
 using Institutional.Application.Common;
 using Institutional.Domain.Entities;
 using Institutional.Domain.Entities.Enums;
-using Mapster;
 using MediatR;
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
@@ -47,7 +45,8 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
                 Occupancy = schedule.Occupancy,
                 DayOfWeek = schedule.DayOfWeek,
                 Occurrence = schedule.Occurrence,
-                Schedule = schedule.Schedule
+                Schedule = schedule.Schedule,
+                Id = schedule.Id
             };
         
         var eventsAvailableWithPosition =
@@ -68,6 +67,7 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
                             DayOfWeek = schedule.DayOfWeek,
                             Occurrence = schedule.Occurrence,
                             Schedule = schedule.Schedule,
+                            Id = schedule.Id,
                             PositionWithinMonth = rowCount + 1 
                         }));
         
@@ -95,6 +95,7 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
                     kind: DateTimeKind.Utc),
                 Occupancy = item.Occupancy,
                 Status = EventStatus.Scheduled,
+                ScheduleEventId = item.Id,
                 CreatedAt = request.AuditFields!.StartedAt,
                 CreatedBy = request.AuditFields!.StartedBy
             });
@@ -111,7 +112,8 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
                 Occupancy = groupItem.Occupancy,
                 DayOfWeek = groupItem.DayOfWeek,
                 Occurrence = groupItem.Occurrence,
-                Schedule = groupItem.Schedule
+                Schedule = groupItem.Schedule,
+                ScheduleEventId = groupItem.Id
             })
             .SelectMany(grouping => grouping.Where(b => b.DayToOccur == grouping.Max(c => c.DayToOccur)))
             .Select(item => new Event
@@ -130,6 +132,7 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
                     kind: DateTimeKind.Utc),
                 Occupancy = item.Occupancy,
                 Status = EventStatus.Scheduled,
+                ScheduleEventId = item.Id,
                 CreatedAt = request.AuditFields!.StartedAt,
                 CreatedBy = request.AuditFields!.StartedBy                
             });
@@ -137,6 +140,26 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
         var events = eventsWeeklyOrSpecific.Union(eventsLastOccurence);
         
         await _context.Events.AddRangeAsync(events, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        
+        var scheduleEventCoordinators = 
+            _context.ScheduleEventCoordinators
+                .Select(p => new { p.ScheduleEventId, p.VolunteerId}).ToImmutableList();
+
+        var createdEvents = _context.Events.Where(p => p.CreatedAt == request.AuditFields!.StartedAt).ToImmutableList();
+        
+        var coordinators = from p in createdEvents
+            join c in scheduleEventCoordinators
+            on p.ScheduleEventId equals c.ScheduleEventId
+            select new EventCoordinator()
+            {
+                EventId = p.Id,
+                VolunteerId = c.VolunteerId,
+                CreatedAt = request.AuditFields!.StartedAt,
+                CreatedBy = request.AuditFields!.StartedBy
+            };
+        
+        await _context.EventCoordinators.AddRangeAsync(coordinators, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
         return new GetOperationsResponse()
