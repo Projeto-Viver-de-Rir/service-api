@@ -13,7 +13,7 @@ public record GetTeamResponse
     public string? Description { get; init; }
     public TeamType Type { get; init; }
     public TeamStatus Status { get; init; }
-    public IEnumerable<Member>? Members { get; set; }
+    public List<Member>? Members { get; set; }
     
     public UserId CreatedBy { get; init; }
     public DateTime CreatedAt { get; init; }
