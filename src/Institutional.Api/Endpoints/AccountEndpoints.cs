@@ -1,10 +1,7 @@
-﻿using Ardalis.Result;
-using Ardalis.Result.AspNetCore;
+﻿using Ardalis.Result.AspNetCore;
 using Institutional.Application.Common.Requests;
-using Institutional.Application.Features.Accounts;
 using Institutional.Application.Features.Accounts.Account;
 using Institutional.Application.Features.Accounts.EnrollAccount;
-using Institutional.Application.Features.Accounts.GetMyself;
 using Institutional.Application.Features.Accounts.GetMyselfV2;
 using Institutional.Application.Features.Accounts.Photo;
 using Institutional.Application.Features.Accounts.Volunteer;
@@ -29,14 +26,6 @@ public static class AccountEndpoints
             .WithTags("account")
             .RequireAuthorization()
             .DisableAntiforgery();
-
-        group.MapGet("/myself", async (IMediator mediator, IHttpContextAccessor httpContextAccessor) =>
-        {
-            var loggedUserId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            var result = await mediator.Send(new GetMyselfRequest(Guid.Parse(loggedUserId)));
-            return result.ToMinimalApiResult();
-        });
         
         group.MapGet("/v2/myself", async (IMediator mediator, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager) =>
         {
