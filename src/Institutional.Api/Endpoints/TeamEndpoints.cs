@@ -31,7 +31,7 @@ public static class TeamEndpoints
             .WithTags("team")
             .RequireAuthorization();
         
-        group.MapGet("/", [Authorize(Roles = $"{nameof(TeamType.Administrative)}")] async (IMediator mediator, [AsParameters] GetAllTeamsRequest request) =>
+        group.MapGet("/", async (IMediator mediator, [AsParameters] GetAllTeamsRequest request) =>
         {
             var result = await mediator.Send(request);
             return result;

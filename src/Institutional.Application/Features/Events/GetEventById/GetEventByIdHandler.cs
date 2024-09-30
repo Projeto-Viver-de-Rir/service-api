@@ -11,11 +11,12 @@ namespace Institutional.Application.Features.Events.GetEventById;
 public class GetEventByIdHandler : IRequestHandler<GetEventByIdRequest, Result<GetEventResponse>>
 {
     private readonly IContext _context;
+    private readonly IStorageService _storageService;
 
-
-    public GetEventByIdHandler(IContext context)
+    public GetEventByIdHandler(IContext context, IStorageService storageService)
     {
         _context = context;
+        _storageService = storageService;
     }
     public async Task<Result<GetEventResponse>> Handle(GetEventByIdRequest request, CancellationToken cancellationToken)
     {
@@ -32,6 +33,18 @@ public class GetEventByIdHandler : IRequestHandler<GetEventByIdRequest, Result<G
 
         var result = eventItem.Adapt<GetEventResponse>();
         result.Capacity = eventItem.Occupancy - eventItem.Presences.Count;
+        
+        foreach (var presence in result.Presences)
+        {
+            if (!string.IsNullOrWhiteSpace(presence.Volunteer.Photo))
+                presence.Volunteer.Photo = await _storageService.GetFilePathAsync(presence.Volunteer.Photo);    
+        }
+        
+        foreach (var coordinator in result.Coordinators)
+        {
+            if (!string.IsNullOrWhiteSpace(coordinator.Volunteer.Photo))
+                coordinator.Volunteer.Photo = await _storageService.GetFilePathAsync(coordinator.Volunteer.Photo);    
+        }
         
         return result;
     }
