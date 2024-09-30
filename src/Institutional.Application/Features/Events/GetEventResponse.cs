@@ -17,8 +17,8 @@ public record GetEventResponse
     public DateTime? HappenAt { get; init; }
     public int Occupancy { get; init; }
     public EventStatus Status { get; init; }
-    public IEnumerable<Coordinator>? Coordinators { get; set; }
-    public IEnumerable<Presence>? Presences { get; set; }
+    public List<Coordinator>? Coordinators { get; set; }
+    public List<Presence>? Presences { get; set; }
     public int Capacity { get; set; }
 }
 
