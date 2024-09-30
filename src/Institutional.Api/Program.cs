@@ -16,6 +16,9 @@ builder.AddValidationSetup();
 
 builder.Services.AddAuthorization();
 
+// Adding cache operations
+builder.Services.AddMemoryCache();
+
 // Swagger
 builder.Services.AddSwaggerSetup();
 

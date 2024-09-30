@@ -5,6 +5,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Institutional.Application.Common;
 using Institutional.Application.Common.Responses;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -15,10 +16,12 @@ namespace Institutional.Infrastructure.AWS;
 public class StorageService : IStorageService
 {
     private readonly BasicAWSCredentials _credentials;
+    private readonly IMemoryCache _cache;
 
-    public StorageService(AWSCredentials credentials)
+    public StorageService(AWSCredentials credentials, IMemoryCache cache)
     {
         _credentials = new BasicAWSCredentials(credentials.AccessKey, credentials.SecretKey);
+        _cache = cache;
     }
 
     public async Task<OperationResult> UploadFileAsync(string BucketName, string FileName, MemoryStream InputStream)
@@ -57,24 +60,29 @@ public class StorageService : IStorageService
     
     public async Task<string?> GetFilePathAsync(string FileName, string BucketName = "institutional-app")
     {
-        var config = new AmazonS3Config
-        {
-            RegionEndpoint = RegionEndpoint.SAEast1
-        };
+        var maximumExpiration = DateTime.UtcNow.AddDays(30);
         
-        try
+        var filePath = _cache.GetOrCreateAsync(FileName, async item =>
         {
-            var preSignedRequest = new GetPreSignedUrlRequest()
+            item.SlidingExpiration = TimeSpan.FromDays(10);
+            item.AbsoluteExpiration = maximumExpiration;
+            
+            try
             {
-                BucketName = BucketName, Key = FileName, Expires = DateTime.UtcNow.AddDays(30)
-            };
+                using var client = new AmazonS3Client(_credentials,
+                    new AmazonS3Config { RegionEndpoint = RegionEndpoint.SAEast1 });
 
-            using var client = new AmazonS3Client(_credentials, config);
-            return await client.GetPreSignedURLAsync(preSignedRequest);
-        }
-        catch(Exception)
-        {
-            return null;
-        }
+                return await client.GetPreSignedURLAsync(new GetPreSignedUrlRequest()
+                {
+                    BucketName = BucketName, Key = FileName, Expires = maximumExpiration
+                });
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        });
+
+        return await filePath;
     }
 }

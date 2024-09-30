@@ -11,13 +11,12 @@ public static class AWSSetup
     public static IServiceCollection AddAWSSetup(this IServiceCollection services, ConfigurationManager configuration)
     {
         var AWSConfiguration = configuration.GetSection("AWSConfiguration");
-            
-        var cred = new AWSCredentials() {
+        
+        services.AddTransient<AWSCredentials>(x => new AWSCredentials(){
             AccessKey = AWSConfiguration["AccessKey"],
             SecretKey = AWSConfiguration["SecretKey"]
-        };
-        
-        services.AddTransient<IStorageService>(x => new StorageService(cred));
+        });
+        services.AddTransient<IStorageService, StorageService>();
         
         return services;
     }
