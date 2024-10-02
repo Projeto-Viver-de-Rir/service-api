@@ -13,11 +13,12 @@ namespace Institutional.Application.Features.Accounts.EnrollAccount;
 public class EnrollAccountHandler : IRequestHandler<EnrollAccountRequest, Result<VolunteerInformation>>
 {
     private readonly IContext _context;
+    private readonly IStorageService _storageService;
     
-    
-    public EnrollAccountHandler(IContext context)
+    public EnrollAccountHandler(IContext context, IStorageService storageService)
     {
         _context = context;
+        _storageService = storageService;
     }
 
     public async Task<Result<VolunteerInformation>> Handle(EnrollAccountRequest request, CancellationToken cancellationToken)
@@ -44,6 +45,9 @@ public class EnrollAccountHandler : IRequestHandler<EnrollAccountRequest, Result
 
             var response = created.Adapt<VolunteerInformation>();
 
+            if (!string.IsNullOrWhiteSpace(response.Photo))
+                response.Photo = await _storageService.GetFilePathAsync(response.Photo);
+            
             return response;
         }
         
