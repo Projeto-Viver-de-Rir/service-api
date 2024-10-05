@@ -34,6 +34,7 @@ public class UpdateScheduleEventHandler : IRequestHandler<UpdateScheduleEventReq
         originalScheduleEvent.Occupancy = request.Occupancy;
         originalScheduleEvent.DayOfWeek = request.DayOfWeek;
         originalScheduleEvent.Occurrence = request.Occurrence;
+        originalScheduleEvent.Schedule = request.Schedule;
         originalScheduleEvent.UpdatedBy = request.AuditFields!.StartedBy;
         originalScheduleEvent.UpdatedAt = request.AuditFields!.StartedAt;
         

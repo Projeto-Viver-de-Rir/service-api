@@ -17,6 +17,7 @@ public record GetScheduleEventResponse
     public int Occupancy { get; set; }
     public DayOfWeek DayOfWeek { get; set; }
     public ScheduleEventInterval Occurrence { get; set; }
+    public TimeOnly Schedule { get; set; }
     public IEnumerable<ScheduleCoordinator>? Coordinators { get; set; }
 }
 
