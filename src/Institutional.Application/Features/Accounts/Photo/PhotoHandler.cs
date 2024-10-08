@@ -34,7 +34,7 @@ public class PhotoHandler : IRequestHandler<PhotoRequest, Result<string>>
             if (originalVolunteer == null)
                 return name;
             
-            originalVolunteer.Photo = string.Concat(userBucket, name);
+            originalVolunteer.Photo = name;
             _context.Volunteers.Update(originalVolunteer);
                 
             await _context.SaveChangesAsync(cancellationToken);
