@@ -2,6 +2,7 @@
 using Institutional.Domain.Auth.Interfaces;
 using Institutional.Infrastructure;
 using EntityFramework.Exceptions.PostgreSQL;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,12 +16,17 @@ public static class PersistenceSetup
 
         services.AddScoped<ISession, Session>();
         services.AddHostedService<ApplicationDbInitializer>();
+        
+        // Add a DbContext to store Domain data
         services.AddDbContextPool<ApplicationDbContext>(o =>
         {
             o.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
             o.UseExceptionProcessor();
         });
-
+        
+        services.AddDataProtection()
+            .PersistKeysToDbContext<ApplicationDbContext>();
+        
         return services;
     }
 }

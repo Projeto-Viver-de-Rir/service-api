@@ -1,13 +1,14 @@
 ﻿using Institutional.Application.Common;
 using Institutional.Domain.Entities;
 using Institutional.Infrastructure.Configuration;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace Institutional.Infrastructure;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>, IContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>, IContext, IDataProtectionKeyContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
     
@@ -23,6 +24,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<Config> Configs { get; set; } = null!;
     public DbSet<ReportDebt> ReportDebts { get; set; } = null!;
     public DbSet<ReportPresence> ReportPresences { get; set; } = null!;
+    
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }    
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -4,6 +4,7 @@ using Institutional.Domain.Entities;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,9 +78,8 @@ public class UpdateScheduleEventHandler : IRequestHandler<UpdateScheduleEventReq
         
         await _context.SaveChangesAsync(cancellationToken);
 
-        var response = originalScheduleEvent.Adapt<GetScheduleEventResponse>();
-        //response.Coordinators = request.Coordinators;
+        originalScheduleEvent.Coordinators = new List<ScheduleEventCoordinator>();
         
-        return response;
+        return originalScheduleEvent.Adapt<GetScheduleEventResponse>();
     }
 }

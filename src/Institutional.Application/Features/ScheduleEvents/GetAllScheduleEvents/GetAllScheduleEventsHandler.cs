@@ -22,7 +22,8 @@ public class GetAllScheduleEventsHandler : IRequestHandler<GetAllScheduleEventsR
     {
         var scheduleEvents = _context.ScheduleEvents
             .Include(p => p.Coordinators)
-            .WhereIf(!string.IsNullOrEmpty(request.Name), x => EF.Functions.Like(x.Name, $"%{request.Name}%"));
+            .WhereIf(!string.IsNullOrEmpty(request.Name),
+                x => EF.Functions.Like(x.Name.ToLower(), $"%{request.Name!.ToLower()}%"));
         return await scheduleEvents.ProjectToType<GetScheduleEventResponse>()
             .OrderBy(x => x.Name)
             .ToPaginatedListAsync(request.CurrentPage, request.PageSize);
