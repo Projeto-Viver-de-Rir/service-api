@@ -1,4 +1,5 @@
-﻿using Institutional.Application.Common.Requests;
+﻿using Ardalis.Result.AspNetCore;
+using Institutional.Application.Common.Requests;
 using Institutional.Application.Features.Reports.Debts.CreateDebtReport;
 using Institutional.Application.Features.Reports.Debts.DeleteItemDebtReport;
 using Institutional.Application.Features.Reports.Debts.GetDebtReport;
@@ -29,7 +30,7 @@ public static class ReportEndpoints
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
             var result = await mediator.Send(request with { AuditFields = audit });
-            return result;
+            return result.ToMinimalApiResult();;
         });
         
         group.MapGet("/debts", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Fiscal)}")] async (IMediator mediator, [AsParameters] GetDebtReportRequest request) =>
@@ -50,7 +51,7 @@ public static class ReportEndpoints
                 new AuditData(httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             
             var result = await mediator.Send(request with { AuditFields = audit });
-            return result;
+            return result.ToMinimalApiResult();
         });
         
         group.MapGet("/presences", [Authorize(Roles = $"{nameof(TeamType.Administrative)},{nameof(TeamType.Operational)}")] async (IMediator mediator, [AsParameters] GetPresenceReportRequest request) =>
