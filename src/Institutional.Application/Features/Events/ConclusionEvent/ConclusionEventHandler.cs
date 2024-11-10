@@ -35,7 +35,7 @@ public class ConclusionEventHandler : IRequestHandler<ConclusionEventRequest, Re
             foreach (var volunteerId in request.Presences)
             {
                 var originalPresence = await _context.EventPresences
-                    .FirstOrDefaultAsync(x => x.EventId == request.Id || x.VolunteerId == volunteerId, cancellationToken);
+                    .FirstOrDefaultAsync(x => x.EventId == request.Id && x.VolunteerId == volunteerId, cancellationToken);
 
                 if (originalPresence != null)
                 {
