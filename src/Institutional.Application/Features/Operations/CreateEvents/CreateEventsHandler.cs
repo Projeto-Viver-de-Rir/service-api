@@ -23,6 +23,9 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
 
     public async Task<Result<GetOperationsResponse>> Handle(CreateEventsRequest request, CancellationToken cancellationToken)
     {
+        var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo");
+        var dif = timeZoneInfo.GetUtcOffset(DateTime.UtcNow);
+        
         var scheduleEvents = _context.ScheduleEvents.Select(p => p).ToImmutableList();
 
         var daysInMonth = DateTime.DaysInMonth(request.MonthToGenerate.Year, request.MonthToGenerate.Month);
@@ -86,13 +89,13 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
                 Address = item.Address,
                 City = item.City,
                 MeetingPoint = item.MeetingPoint,
-                HappenAt = new DateTime(item.DayToOccur.Year, 
+                HappenAt = AddTimeSpanToSpecifiedDate(new DateTime(item.DayToOccur.Year, 
                     item.DayToOccur.Month, 
                     item.DayToOccur.Day, 
                     item.Schedule.Hour, 
                     item.Schedule.Minute, 
                     0,
-                    kind: DateTimeKind.Utc),
+                    kind: DateTimeKind.Utc), dif),
                 Occupancy = item.Occupancy,
                 Status = EventStatus.Scheduled,
                 ScheduleEventId = item.Id,
@@ -123,13 +126,13 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
                 Address = item.Address,
                 City = item.City,
                 MeetingPoint = item.MeetingPoint,
-                HappenAt = new DateTime(item.DayToOccur.Year, 
+                HappenAt = AddTimeSpanToSpecifiedDate(new DateTime(item.DayToOccur.Year, 
                     item.DayToOccur.Month, 
                     item.DayToOccur.Day, 
                     item.Schedule.Hour, 
                     item.Schedule.Minute, 
                     0,
-                    kind: DateTimeKind.Utc),
+                    kind: DateTimeKind.Utc), dif),
                 Occupancy = item.Occupancy,
                 Status = EventStatus.Scheduled,
                 ScheduleEventId = item.Id,
@@ -167,5 +170,10 @@ public class CreateEventsHandler : IRequestHandler<CreateEventsRequest, Result<G
             BaseItems = scheduleEvents.Count(), 
             GeneratedItems = events.Count()
         };
+    }
+
+    private static DateTime AddTimeSpanToSpecifiedDate(DateTime dateTime, TimeSpan time)
+    {
+        return dateTime + (time * -1);
     }
 }

@@ -6,6 +6,7 @@ EXPOSE 8080
 
 # Install cultures (same approach as Alpine SDK image)
 RUN apk add --no-cache icu-libs
+RUN apk add --no-cache tzdata
 
 # Disable the invariant mode (set in base image)
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
